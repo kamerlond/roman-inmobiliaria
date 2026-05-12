@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Admin | Roman Inmobiliaria</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --c-bg:       #f5f3ee;
+      --c-surface:  #fdfcf9;
+      --c-surface2: #eeebe3;
+      --c-border:   #ddd8cc;
+      --c-divider:  #e8e4db;
+      --c-text:     #1c1a16;
+      --c-muted:    #6b6659;
+      --c-faint:    #a09a8e;
+      --c-inv:      #fdfcf9;
+      --c-gold:     #b8873a;
+      --c-gold-lt:  #f5e8d0;
+      --c-gold-dk:  #8c6427;
+      --c-err:      #a83240;
+      --c-err-lt:   #fce8ec;
+      --c-ok:       #2d7a4f;
+      --c-ok-lt:    #e0f5eb;
+      --c-warn:     #8c6427;
+      --c-warn-lt:  #fef3dc;
+      --c-info:     #1a5fb4;
+      --c-info-lt:  #dbeafe;
+      --shadow-sm:  0 1px 3px rgba(28,26,22,.07);
+      --shadow-md:  0 8px 28px rgba(28,26,22,.10);
+      --shadow-lg:  0 20px 56px rgba(28,26,22,.14);
+      --r-sm:.5rem; --r-md:.9rem; --r-lg:1.4rem; --r-xl:2rem; --r-full:999px;
+      --font-display:'Playfair Display',Georgia,serif;
+      --font-body:'DM Sans',system-ui,sans-serif;
+      --max-w:1280px; --nav-h:72px; --sidebar-w:260px;
+    }
+    [data-theme="dark"] {
+      --c-bg:#181510; --c-surface:#201d18; --c-surface2:#272319;
+      --c-border:#3a342a; --c-divider:#2e2a22; --c-text:#ede8df;
+      --c-muted:#a8a090; --c-faint:#6e6860; --c-inv:#181510;
+      --c-gold:#d4a355; --c-gold-lt:#2e2213; --c-gold-dk:#e8be7a;
+      --c-err:#e07080; --c-err-lt:#2e1018; --c-ok:#5fc98a; --c-ok-lt:#0d2215;
+      --c-warn:#d4a355; --c-warn-lt:#2e2213; --c-info:#6da4e8; --c-info-lt:#1e3a5f;
+      --shadow-sm:0 1px 3px rgba(0,0,0,.2); --shadow-md:0 8px 28px rgba(0,0,0,.32); --shadow-lg:0 20px 56px rgba(0,0,0,.44);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{min-height:100vh;font-family:var(--font-body);font-size:1rem;line-height:1.65;color:var(--c-text);background:var(--c-bg);transition:background .3s,color .3s}
+    img,svg{display:block;max-width:100%}
+    a{color:inherit;text-decoration:none}
+    button,input,textarea,select{font:inherit;color:inherit;border:none;background:none;cursor:pointer}
+    :focus-visible{outline:2px solid var(--c-gold);outline-offset:3px}
+    .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+    .hidden{display:none!important}
+    .wrap{width:min(calc(100% - 2rem),var(--max-w));margin:0 auto}
+
+    /* ── Buttons ── */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;padding:.75rem 1.3rem;border-radius:var(--r-full);font-weight:700;font-size:.9rem;transition:transform .15s,box-shadow .15s,background .15s;line-height:1}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-gold{background:var(--c-gold);color:#fff;box-shadow:0 4px 14px rgba(184,135,58,.3)}
+    .btn-gold:hover{background:var(--c-gold-dk)}
+    .btn-outline{background:transparent;border:1.5px solid var(--c-border)}
+    .btn-outline:hover{background:var(--c-surface2)}
+    .btn-danger{background:var(--c-err-lt);color:var(--c-err);border:1.5px solid color-mix(in srgb, var(--c-err) 22%, transparent)}
+    .btn-danger:hover{background:var(--c-err);color:#fff}
+    .btn-success{background:var(--c-ok-lt);color:var(--c-ok);border:1.5px solid color-mix(in srgb, var(--c-ok) 22%, transparent)}
+    .btn-success:hover{background:var(--c-ok);color:#fff}
+    .btn-sm{padding:.5rem .9rem;font-size:.82rem}
+    .btn-xs{padding:.35rem .7rem;font-size:.78rem}
+
+    /* ── Badges ── */
+    .badge{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .65rem;border-radius:var(--r-full);font-size:.73rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .badge-pending{background:var(--c-warn-lt);color:var(--c-warn)}
+    .badge-accepted{background:var(--c-ok-lt);color:var(--c-ok)}
+    .badge-rejected{background:var(--c-err-lt);color:var(--c-err)}
+    .badge-new{background:var(--c-info-lt);color:var(--c-info)}
+    .badge-read{background:var(--c-surface2);color:var(--c-muted)}
+    .pill{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .8rem;border-radius:var(--r-full);background:var(--c-gold-lt);color:var(--c-gold);font-size:.73rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em}
+
+    /* ── Toast ── */
+    #toast{position:fixed;right:1.5rem;bottom:1.5rem;z-index:200;background:var(--c-text);color:var(--c-inv);padding:1rem 1.25rem;border-radius:var(--r-md);box-shadow:var(--shadow-lg);max-width:340px;font-size:.92rem;opacity:0;transform:translateY(10px);pointer-events:none;transition:.22s ease}
+    #toast.show{opacity:1;transform:translateY(0);pointer-events:auto}
+
+    /* ══════ HEADER ══════ */
+    .site-header{position:sticky;top:0;z-index:80;backdrop-filter:blur(16px) saturate(1.4);background:color-mix(in srgb, var(--c-bg) 90%, transparent);border-bottom:1px solid var(--c-divider);height:var(--nav-h)}
+    .header-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:100%}
+    .brand{display:flex;align-items:center;gap:.8rem}
+    .brand-logo-wrap{width:40px;height:40px;background:var(--c-gold);border-radius:11px;display:grid;place-items:center;color:#fff;flex-shrink:0}
+    .brand-name{font-family:var(--font-display);font-size:1.1rem;font-weight:700;line-height:1.1}
+    .brand-sub{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:var(--c-muted)}
+    .header-right{display:flex;align-items:center;gap:.65rem}
+    .icon-btn{width:38px;height:38px;border-radius:var(--r-full);border:1.5px solid var(--c-border);display:grid;place-items:center;background:var(--c-surface);transition:background .15s}
+    .icon-btn:hover{background:var(--c-surface2)}
+    .admin-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .75rem;border-radius:var(--r-full);background:var(--c-gold-lt);color:var(--c-gold);font-size:.75rem;font-weight:700;border:1px solid color-mix(in srgb, var(--c-gold) 28%, transparent)}
+
+    /* ══════ LOGIN SCREEN ══════ */
+    .login-screen{min-height:calc(100vh - var(--nav-h));display:grid;place-items:center;padding:2rem}
+    .login-card{width:min(100%,460px);background:var(--c-surface);border:1px solid var(--c-divider);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:2.25rem;position:relative;overflow:hidden}
+    .login-card::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(circle, color-mix(in srgb, var(--c-gold) 14%, transparent), transparent 70%);pointer-events:none}
+    .login-title{font-family:var(--font-display);font-size:2rem;font-weight:900;margin:1rem 0 .5rem;line-height:1.05}
+    .login-sub{color:var(--c-muted);font-size:.93rem;margin-bottom:1.5rem}
+    .field{display:grid;gap:.4rem;margin-bottom:1rem}
+    label{font-size:.87rem;font-weight:700}
+    input,textarea,select{width:100%;padding:.8rem 1rem;border-radius:var(--r-md);border:1.5px solid var(--c-border);background:var(--c-surface2);font-size:.97rem;transition:border-color .15s}
+    input:focus,textarea:focus,select:focus{outline:none;border-color:var(--c-gold)}
+    textarea{min-height:100px;resize:vertical}
+    .pass-wrap{position:relative}
+    .pass-wrap input{padding-right:3rem}
+    .pass-eye{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;color:var(--c-muted);padding:.25rem}
+    .error-msg{display:none;color:var(--c-err);font-size:.87rem;padding:.7rem 1rem;background:var(--c-err-lt);border-radius:var(--r-md);margin-bottom:.85rem;border:1px solid color-mix(in srgb, var(--c-err) 20%, transparent)}
+
+    /* ══════ ADMIN SHELL ══════ */
+    .admin-shell{display:none;min-height:calc(100vh - var(--nav-h))}
+    .admin-layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;gap:0;min-height:calc(100vh - var(--nav-h))}
+
+    /* Sidebar */
+    .sidebar{background:var(--c-surface);border-right:1px solid var(--c-divider);padding:1.5rem 1rem;display:grid;align-content:start;gap:.4rem;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto}
+    .sidebar-section-label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--c-faint);padding:.5rem .75rem .25rem;margin-top:.5rem}
+    .sidebar-btn{display:flex;align-items:center;gap:.75rem;width:100%;padding:.8rem .9rem;border-radius:var(--r-md);font-weight:600;font-size:.93rem;transition:background .15s,color .15s;color:var(--c-muted);border:1.5px solid transparent}
+    .sidebar-btn:hover{background:var(--c-surface2);color:var(--c-text)}
+    .sidebar-btn.active{background:var(--c-gold-lt);color:var(--c-gold);border-color:color-mix(in srgb, var(--c-gold) 22%, transparent)}
+    .sidebar-btn svg{flex-shrink:0;opacity:.75}
+    .sidebar-btn.active svg{opacity:1}
+    .sidebar-notif{margin-left:auto;min-width:20px;height:20px;border-radius:var(--r-full);background:var(--c-gold);color:#fff;font-size:.7rem;font-weight:800;display:grid;place-items:center;padding:0 .3rem}
+
+    /* Content area */
+    .content-area{padding:2rem;background:var(--c-bg)}
+    .pane{display:none}
+    .pane.active{display:block}
+    .pane-title{font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:.35rem}
+    .pane-sub{color:var(--c-muted);font-size:.93rem;margin-bottom:1.75rem}
+
+    /* KPI cards */
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+    .kpi{background:var(--c-surface);border:1px solid var(--c-divider);border-radius:var(--r-lg);padding:1.1rem 1.3rem;box-shadow:var(--shadow-sm)}
+    .kpi-val{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--c-gold);line-height:1}
+    .kpi-label{font-size:.82rem;color:var(--c-muted);margin-top:.35rem}
+    .kpi-icon{width:38px;height:38px;border-radius:var(--r-md);background:var(--c-gold-lt);display:grid;place-items:center;color:var(--c-gold);margin-bottom:.75rem}
+
+    /* Cards (messages, appointments) */
+    .card-list{display:grid;gap:.85rem}
+    .card{background:var(--c-surface);border:1px solid var(--c-divider);border-radius:var(--r-lg);padding:1.2rem;box-shadow:var(--shadow-sm)}
+    .card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.75rem}
+    .card-name{font-weight:700;font-size:1rem}
+    .card-meta{font-size:.84rem;color:var(--c-muted);margin-top:.2rem}
+    .card-body{font-size:.93rem;color:var(--c-muted);margin-bottom:.85rem;line-height:1.55}
+    .card-actions{display:flex;flex-wrap:wrap;gap:.5rem}
+
+    /* Listing list */
+    .listing-item{background:var(--c-surface);border:1px solid var(--c-divider);border-radius:var(--r-lg);overflow:hidden;display:grid;grid-template-columns:140px 1fr;box-shadow:var(--shadow-sm)}
+    .listing-img{width:140px;height:110px;object-fit:cover}
+    .listing-body{padding:1rem;display:flex;flex-direction:column;gap:.45rem}
+    .listing-price{font-family:var(--font-display);font-weight:700;color:var(--c-gold);font-size:1.15rem}
+    .listing-title{font-weight:700}
+    .listing-loc{font-size:.83rem;color:var(--c-muted)}
+    .listing-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:auto}
+
+    /* Forms in pane */
+    .form-section{background:var(--c-surface);border:1px solid var(--c-divider);border-radius:var(--r-xl);padding:1.75rem;box-shadow:var(--shadow-sm)}
+    .form-section h3{font-family:var(--font-display);font-size:1.25rem;font-weight:700;margin-bottom:1.25rem}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+    .field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
+    .field-full{margin-bottom:1rem}
+    .img-urls{display:grid;gap:.6rem;margin-top:.5rem}
+    .thumb-preview{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.65rem}
+    .thumb-preview img{height:68px;border-radius:.6rem;cursor:zoom-in}
+    .upload-area{border:2px dashed var(--c-border);border-radius:var(--r-lg);background:var(--c-surface2);padding:1.5rem;text-align:center;color:var(--c-muted);font-size:.9rem;transition:border-color .15s}
+    .upload-area.drag-over{border-color:var(--c-gold);background:var(--c-gold-lt)}
+    .upload-area input[type=file]{display:none}
+
+    /* Modal */
+    .modal-overlay{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);display:grid;place-items:center;padding:1rem}
+    .modal{background:var(--c-surface);border:1px solid var(--c-divider);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);width:min(100%,580px);max-height:90vh;overflow-y:auto}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid var(--c-divider)}
+    .modal-header h3{font-family:var(--font-display);font-weight:700;font-size:1.2rem}
+    .modal-body{padding:1.5rem}
+    .modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--c-divider);display:flex;gap:.75rem;justify-content:flex-end}
+
+    /* Empty state */
+    .empty{text-align:center;padding:3rem 2rem;color:var(--c-muted)}
+    .empty svg{margin:0 auto 1rem;opacity:.3}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.88);display:grid;place-items:center;padding:1rem}
+    .lightbox img{max-width:90vw;max-height:85vh;border-radius:var(--r-lg)}
+    .lb-close{position:absolute;top:1rem;right:1rem;color:#fff;font-size:2rem;cursor:pointer}
+
+    /* Responsive */
+    @media(max-width:900px){
+      .admin-layout{grid-template-columns:1fr}
+      .sidebar{position:relative;top:0;height:auto;flex-direction:row;display:flex;flex-wrap:wrap;border-right:none;border-bottom:1px solid var(--c-divider);gap:.35rem;padding:1rem}
+      .sidebar-section-label{display:none}
+      .content-area{padding:1.25rem}
+      .kpi-row{grid-template-columns:repeat(2,1fr)}
+      .field-row,.field-row3{grid-template-columns:1fr}
+      .listing-item{grid-template-columns:1fr}
+      .listing-img{width:100%;height:160px}
+    }
+    @media(max-width:560px){.kpi-row{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Lightbox -->
+  <div class="lightbox hidden" id="lightbox"><span class="lb-close" id="lbClose">&times;</span><img id="lbImg" src="" alt="Vista ampliada"></div>
+
+  <!-- ════ HEADER ════ -->
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a href="index.html" class="brand" aria-label="Volver a la web">
+        <div class="brand-logo-wrap">
+          <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><path d="M8 24L24 9l16 15" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 22v14h20V22" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 36V26h6v10" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div><div class="brand-name">Roman</div><div class="brand-sub">Inmobiliaria</div></div>
+      </a>
+      <div id="adminHeaderRight" class="header-right" style="display:none">
+        <span class="admin-badge" id="sessionUser">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Admin
+        </span>
+        <button class="icon-btn" id="themeBtn" aria-label="Cambiar tema">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIcon"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <button class="btn btn-outline btn-sm" id="logoutBtn">Cerrar sesión</button>
+        <a href="index.html" class="btn btn-outline btn-sm">Ver web</a>
+      </div>
+      <div id="loginHeaderRight" class="header-right">
+        <button class="icon-btn" id="themeBtnLogin" aria-label="Cambiar tema">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIconLogin"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <a href="index.html" class="btn btn-outline btn-sm">Volver a la web</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ════ LOGIN ════ -->
+  <section class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <span class="pill">Acceso privado</span>
+      <h1 class="login-title">Panel de administrador</h1>
+      <p class="login-sub">Zona restringida. Introduce tus credenciales para acceder al panel de gestión.</p>
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="loginUser">Usuario</label>
+          <input id="loginUser" name="user" type="text" required autocomplete="username" placeholder="admin">
+        </div>
+        <div class="field">
+          <label for="loginPass">Contraseña</label>
+          <div class="pass-wrap">
+            <input id="loginPass" name="pass" type="password" required autocomplete="current-password" placeholder="••••••••">
+            <button type="button" class="pass-eye" id="passEye" aria-label="Mostrar contraseña">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="error-msg" id="loginError">Usuario o contraseña incorrectos. Inténtalo de nuevo.</div>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.5rem">
+          <button class="btn btn-gold" type="submit" style="flex:1">Entrar al panel</button>
+          <a href="index.html" class="btn btn-outline">Cancelar</a>
+        </div>
+      </form>
+      <p style="margin-top:1.25rem;font-size:.8rem;color:var(--c-faint);text-align:center">Usuario: <code>admin</code> · Contraseña: <code>roman2026</code></p>
+    </div>
+  </section>
+
+  <!-- ════ ADMIN SHELL ════ -->
+  <div class="admin-shell" id="adminShell">
+    <div class="admin-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar" aria-label="Navegación del panel">
+        <div class="sidebar-section-label">Principal</div>
+        <button class="sidebar-btn active" data-pane="dashboard">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+          Resumen
+        </button>
+        <div class="sidebar-section-label">Gestión</div>
+        <button class="sidebar-btn" data-pane="listings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Anuncios
+        </button>
+        <button class="sidebar-btn" data-pane="add-listing">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Añadir anuncio
+        </button>
+        <button class="sidebar-btn" data-pane="messages">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Mensajes
+          <span class="sidebar-notif hidden" id="msgsNotif">0</span>
+        </button>
+        <button class="sidebar-btn" data-pane="appointments">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Citas
+          <span class="sidebar-notif hidden" id="apptsNotif">0</span>
+        </button>
+        <button class="sidebar-btn" data-pane="clients">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Clientes
+        </button>
+      </aside>
+
+      <!-- Content -->
+      <main class="content-area">
+
+        <!-- DASHBOARD -->
+        <div class="pane active" id="pane-dashboard">
+          <h2 class="pane-title">Resumen general</h2>
+          <p class="pane-sub">Bienvenido al panel de Roman Inmobiliaria.</p>
+          <div class="kpi-row">
+            <div class="kpi">
+              <div class="kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+              <div class="kpi-val" id="kpiProps">0</div><div class="kpi-label">Anuncios activos</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+              <div class="kpi-val" id="kpiMsgs">0</div><div class="kpi-label">Mensajes recibidos</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+              <div class="kpi-val" id="kpiAppts">0</div><div class="kpi-label">Citas totales</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div class="kpi-val" id="kpiPending">0</div><div class="kpi-label">Citas pendientes</div>
+            </div>
+          </div>
+          <!-- Latest messages + appointments preview -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+            <div>
+              <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:.85rem;">Últimos mensajes</h3>
+              <div id="latestMsgs" class="card-list"></div>
+            </div>
+            <div>
+              <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:.85rem;">Citas recientes</h3>
+              <div id="latestAppts" class="card-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LISTINGS -->
+        <div class="pane" id="pane-listings">
+          <h2 class="pane-title">Anuncios publicados</h2>
+          <p class="pane-sub">Gestiona el catálogo de propiedades. Puedes editar o eliminar cada anuncio.</p>
+          <div class="card-list" id="listingsList"></div>
+        </div>
+
+        <!-- ADD / EDIT LISTING -->
+        <div class="pane" id="pane-add-listing">
+          <h2 class="pane-title" id="listingFormTitle">Añadir anuncio</h2>
+          <p class="pane-sub">Completa los campos para publicar una nueva propiedad en la web.</p>
+          <div class="form-section">
+            <form id="listingForm" novalidate>
+              <input type="hidden" id="editId" value="">
+              <div class="field-row">
+                <div class="field" style="margin-bottom:0"><label for="fTitle">Título *</label><input id="fTitle" name="title" required placeholder="Ej. Chalet adosado con piscina"></div>
+                <div class="field" style="margin-bottom:0"><label for="fPrice">Precio *</label><input id="fPrice" name="price" required placeholder="Ej. 250.000 € / 950 €/mes"></div>
+              </div>
+              <div class="field-row" style="margin-top:1rem">
+                <div class="field" style="margin-bottom:0"><label for="fLocation">Ubicación *</label><input id="fLocation" name="location" required placeholder="Ej. Bormujos, Sevilla"></div>
+                <div class="field" style="margin-bottom:0">
+                  <label for="fTag">Tipo</label>
+                  <select id="fTag" name="tag"><option value="Venta">Venta</option><option value="Alquiler">Alquiler</option><option value="Oportunidad">Oportunidad</option><option value="Reservado">Reservado</option></select>
+                </div>
+              </div>
+              <div class="field-full" style="margin-top:1rem">
+                <label for="fFeatures">Características (separadas por ·)</label>
+                <input id="fFeatures" name="features" placeholder="Ej. 3 dorm · 2 baños · 120 m² · Garaje">
+              </div>
+              <div class="field-full">
+                <label for="fDescription">Descripción</label>
+                <textarea id="fDescription" name="description" placeholder="Describe la propiedad: orientación, acabados, extras…"></textarea>
+              </div>
+
+              <!-- Image URLs -->
+              <div class="field-full">
+                <label>URLs de imágenes (hasta 5)</label>
+                <div class="img-urls" id="imgUrlsContainer">
+                  <input class="img-url-input" type="url" placeholder="https://… (imagen principal)">
+                  <input class="img-url-input" type="url" placeholder="https://… (imagen 2)">
+                  <input class="img-url-input" type="url" placeholder="https://… (imagen 3, opcional)">
+                </div>
+                <button type="button" class="btn btn-outline btn-sm" id="addImgUrl" style="margin-top:.5rem">+ Añadir URL</button>
+                <div class="thumb-preview" id="thumbPreview"></div>
+              </div>
+
+              <!-- Image upload -->
+              <div class="field-full">
+                <label>O sube imágenes desde tu equipo</label>
+                <div class="upload-area" id="uploadArea">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto .5rem;opacity:.45"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <p>Arrastra imágenes aquí o <label for="fileInput" style="color:var(--c-gold);cursor:pointer;font-weight:700">elige archivos</label></p>
+                  <input type="file" id="fileInput" accept="image/*" multiple>
+                </div>
+                <div class="thumb-preview" id="uploadedPreviews"></div>
+              </div>
+
+              <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
+                <button class="btn btn-gold" type="submit" id="listingSubmitBtn">Publicar anuncio</button>
+                <button class="btn btn-outline" type="button" id="cancelEditBtn" class="hidden">Cancelar edición</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- MESSAGES -->
+        <div class="pane" id="pane-messages">
+          <h2 class="pane-title">Mensajes recibidos</h2>
+          <p class="pane-sub">Mensajes enviados desde el formulario de contacto de la web.</p>
+          <div class="card-list" id="messagesList"></div>
+        </div>
+
+        <!-- APPOINTMENTS -->
+        <div class="pane" id="pane-appointments">
+          <h2 class="pane-title">Gestión de citas</h2>
+          <p class="pane-sub">Solicitudes de cita de clientes. Acéptalas o recházalas. El cliente será informado por teléfono.</p>
+          <div class="card-list" id="appointmentsList"></div>
+        </div>
+
+        <!-- CLIENTS -->
+        <div class="pane" id="pane-clients">
+          <h2 class="pane-title">Clientes</h2>
+          <p class="pane-sub">Todos los contactos registrados desde mensajes y solicitudes de cita.</p>
+          <div class="card-list" id="clientsList"></div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Edit Listing Modal -->
+  <div class="modal-overlay hidden" id="editModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Editar anuncio</h3>
+        <button class="icon-btn" id="closeEditModal" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm" novalidate>
+          <input type="hidden" id="editModalId">
+          <div class="field-row"><div class="field" style="margin-bottom:0"><label>Título *</label><input id="eTitle" required></div><div class="field" style="margin-bottom:0"><label>Precio *</label><input id="ePrice" required></div></div>
+          <div class="field-row" style="margin-top:1rem"><div class="field" style="margin-bottom:0"><label>Ubicación *</label><input id="eLocation" required></div><div class="field" style="margin-bottom:0"><label>Tipo</label><select id="eTag"><option>Venta</option><option>Alquiler</option><option>Oportunidad</option><option>Reservado</option></select></div></div>
+          <div style="margin-top:1rem" class="field-full"><label>Características</label><input id="eFeatures"></div>
+          <div class="field-full" style="margin-top:1rem"><label>Descripción</label><textarea id="eDescription"></textarea></div>
+          <div class="field-full" style="margin-top:1rem"><label>Imágenes</label><div id="eImagesContainer"></div></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="closeEditModal2">Cancelar</button>
+        <button class="btn btn-gold" id="saveEditBtn">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const SUPA_URL = 'https://dbncbyupmvsypsxzidom.supabase.co';
+  const SUPA_KEY = 'sb_publishable_XB06JzGdZIkS9mJ1ljeP7g_STcPgRBU';
+
+  // ── Supabase REST helpers ──
+  async function sbSelect(table, opts='') {
+    const r = await fetch(`${SUPA_URL}/rest/v1/${table}?${opts}`, {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+  async function sbInsert(table, body) {
+    const r = await fetch(`${SUPA_URL}/rest/v1/${table}`, {
+      method: 'POST',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+  async function sbUpdate(table, id, body) {
+    const r = await fetch(`${SUPA_URL}/rest/v1/${table}?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) throw new Error(await r.text());
+  }
+  async function sbDelete(table, id) {
+    const r = await fetch(`${SUPA_URL}/rest/v1/${table}?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+    });
+    if (!r.ok) throw new Error(await r.text());
+  }
+
+  // ── Supabase Storage upload ──
+  async function uploadImage(file) {
+    const ext = file.name.split('.').pop();
+    const path = `properties/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const r = await fetch(`${SUPA_URL}/storage/v1/object/property-images/${path}`, {
+      method: 'POST',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': file.type },
+      body: file
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return `${SUPA_URL}/storage/v1/object/public/property-images/${path}`;
+  }
+
+  function uid() { return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2); }
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function toast(m,d=3600) { const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),d); }
+
+  // ── Theme ──
+  function applyTheme(th) {
+    document.documentElement.setAttribute('data-theme', th);
+    localStorage.setItem('romanTheme', th);
+    ['themeIcon','themeIconLogin'].forEach(id => {
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.innerHTML = th==='dark'
+        ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" fill="none"/>'
+        : '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+    });
+  }
+  applyTheme(localStorage.getItem('romanTheme')||'light');
+  ['themeBtn','themeBtnLogin'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('click', () => applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark'));
+  });
+
+  // ── Auth ──
+  const ADMIN_USER = 'admin', ADMIN_PASS = 'roman2026';
+
+  function showPanel() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('adminShell').style.display = 'block';
+    document.getElementById('loginHeaderRight').style.display = 'none';
+    document.getElementById('adminHeaderRight').style.display = 'flex';
+    renderAll();
+  }
+  function hidePanel() {
+    sessionStorage.removeItem('romanAdmin');
+    document.getElementById('adminShell').style.display = 'none';
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('loginHeaderRight').style.display = 'flex';
+    document.getElementById('adminHeaderRight').style.display = 'none';
+    document.getElementById('loginForm').reset();
+  }
+  document.getElementById('loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value;
+    const err = document.getElementById('loginError');
+    if (u===ADMIN_USER && p===ADMIN_PASS) {
+      sessionStorage.setItem('romanAdmin','true');
+      err.style.display='none';
+      showPanel();
+      toast('✅ Sesión iniciada correctamente.');
+    } else {
+      err.style.display='block';
+      document.getElementById('loginPass').value='';
+    }
+  });
+  document.getElementById('passEye').addEventListener('click',()=>{
+    const i=document.getElementById('loginPass');
+    i.type=i.type==='password'?'text':'password';
+  });
+  document.getElementById('logoutBtn').addEventListener('click',()=>{ hidePanel(); toast('Sesión cerrada.'); });
+  if (sessionStorage.getItem('romanAdmin')==='true') showPanel();
+  else { document.getElementById('adminHeaderRight').style.display='none'; }
+
+  // ── Sidebar nav ──
+  document.querySelectorAll('.sidebar-btn[data-pane]').forEach(btn => {
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.sidebar-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('pane-'+btn.dataset.pane).classList.add('active');
+    });
+  });
+
+  // ── renderAll ──
+  async function renderAll() {
+    await Promise.all([renderKPIs(), renderDashboard(), renderListings(), renderMessages(), renderAppointments(), renderClients()]);
+    updateNotifs();
+  }
+
+  async function renderKPIs() {
+    try {
+      const [props, msgs, appts] = await Promise.all([
+        sbSelect('properties','select=id'),
+        sbSelect('messages','select=id'),
+        sbSelect('appointments','select=id,status')
+      ]);
+      document.getElementById('kpiProps').textContent   = props.length;
+      document.getElementById('kpiMsgs').textContent    = msgs.length;
+      document.getElementById('kpiAppts').textContent   = appts.length;
+      document.getElementById('kpiPending').textContent = appts.filter(a=>a.status==='pending').length;
+    } catch(e) { console.error(e); }
+  }
+
+  async function updateNotifs() {
+    try {
+      const [msgs, appts] = await Promise.all([
+        sbSelect('messages','select=status'),
+        sbSelect('appointments','select=status')
+      ]);
+      const newMsgs   = msgs.filter(m=>m.status==='new').length;
+      const pendAppts = appts.filter(a=>a.status==='pending').length;
+      const mn = document.getElementById('msgsNotif');
+      const an = document.getElementById('apptsNotif');
+      mn.textContent=newMsgs;   mn.classList.toggle('hidden', newMsgs===0);
+      an.textContent=pendAppts; an.classList.toggle('hidden', pendAppts===0);
+    } catch(e) {}
+  }
+
+  async function renderDashboard() {
+    try {
+      const [msgs, appts] = await Promise.all([
+        sbSelect('messages','order=created_at.desc&limit=3'),
+        sbSelect('appointments','order=created_at.desc&limit=3')
+      ]);
+      const lm = document.getElementById('latestMsgs');
+      const la = document.getElementById('latestAppts');
+      lm.innerHTML = msgs.length ? msgs.map(m=>`<div class="card"><div class="card-header"><div><div class="card-name">${esc(m.name)}</div><div class="card-meta">${esc(m.createdat||'')}</div></div><span class="badge badge-${m.status==='new'?'new':'read'}">${m.status==='new'?'Nuevo':'Leído'}</span></div><div class="card-body">${esc(m.message||'').slice(0,100)}${(m.message||'').length>100?'…':''}</div></div>`).join('') : '<div class="empty"><p>Sin mensajes aún.</p></div>';
+      la.innerHTML = appts.length ? appts.map(a=>`<div class="card"><div class="card-header"><div><div class="card-name">${esc(a.name)}</div><div class="card-meta">${esc(a.date)} · ${esc(a.phone)}</div></div>${badgeAppt(a.status)}</div></div>`).join('') : '<div class="empty"><p>Sin citas aún.</p></div>';
+    } catch(e) { console.error(e); }
+  }
+
+  function badgeAppt(s) {
+    const map={pending:'badge-pending',accepted:'badge-accepted',rejected:'badge-rejected'};
+    const lbl={pending:'Pendiente',accepted:'Aceptada',rejected:'Rechazada'};
+    return `<span class="badge ${map[s]||'badge-read'}">${lbl[s]||s}</span>`;
+  }
+
+  // ── LISTINGS ──
+  async function renderListings() {
+    try {
+      const props = await sbSelect('properties','order=created_at.desc');
+      const el = document.getElementById('listingsList');
+      if (!props.length) { el.innerHTML='<div class="empty"><p>No hay anuncios publicados.</p></div>'; return; }
+      el.innerHTML = props.map(p => {
+        const imgs = Array.isArray(p.images)&&p.images.length ? p.images : ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&q=70'];
+        return `<div class="listing-item">
+          <img class="listing-img" src="${esc(imgs[0])}" alt="${esc(p.title)}" loading="lazy" onclick="openLb('${esc(imgs[0])}')" style="cursor:zoom-in">
+          <div class="listing-body">
+            <div class="listing-price">${esc(p.price)}</div>
+            <div class="listing-title">${esc(p.title)} <span class="badge badge-new" style="font-size:.65rem">${esc(p.tag||'Venta')}</span></div>
+            <div class="listing-loc">${esc(p.location)} · ${esc(p.features||'')}</div>
+            ${p.description?`<div style="font-size:.83rem;color:var(--c-muted);line-height:1.5">${esc(p.description).slice(0,120)}…</div>`:''}
+            <div class="listing-actions">
+              <button class="btn btn-outline btn-xs" onclick="openEditModal('${p.id}')">✏️ Editar</button>
+              <button class="btn btn-danger btn-xs" onclick="deleteProp('${p.id}')">🗑️ Eliminar</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    } catch(e) { console.error(e); }
+  }
+
+  async function deleteProp(id) {
+    if (!confirm('¿Eliminar este anuncio?')) return;
+    try { await sbDelete('properties', id); await renderAll(); toast('Anuncio eliminado.'); }
+    catch(e) { toast('Error al eliminar.'); console.error(e); }
+  }
+
+  // ── Add listing form ──
+  function refreshThumbs() {
+    const urls = [...document.querySelectorAll('.img-url-input')].map(i=>i.value.trim()).filter(Boolean);
+    const div = document.getElementById('thumbPreview');
+    div.innerHTML = urls.map(u=>`<img src="${esc(u)}" alt="preview" onerror="this.style.display='none'" style="height:68px;border-radius:.6rem;cursor:zoom-in" onclick="openLb('${esc(u)}')">`).join('');
+  }
+  document.getElementById('imgUrlsContainer').addEventListener('input', refreshThumbs);
+  document.getElementById('addImgUrl').addEventListener('click',()=>{
+    const c=document.getElementById('imgUrlsContainer');
+    if(c.children.length>=5){toast('Máximo 5 URLs.');return;}
+    const inp=document.createElement('input');
+    inp.className='img-url-input';inp.type='url';inp.placeholder='https://…';
+    c.appendChild(inp);
+    inp.addEventListener('input',refreshThumbs);
+    inp.focus();
+  });
+
+  // File uploads → Supabase Storage
+  const uploadedImageUrls = [];
+  const fileInput  = document.getElementById('fileInput');
+  const uploadArea = document.getElementById('uploadArea');
+  const uploadedPreviewsEl = document.getElementById('uploadedPreviews');
+
+  uploadArea.addEventListener('dragover',  e=>{e.preventDefault();uploadArea.classList.add('drag-over')});
+  uploadArea.addEventListener('dragleave', ()=>uploadArea.classList.remove('drag-over'));
+  uploadArea.addEventListener('drop',      e=>{e.preventDefault();uploadArea.classList.remove('drag-over');handleFiles(e.dataTransfer.files)});
+  fileInput.addEventListener('change',     ()=>handleFiles(fileInput.files));
+
+  async function handleFiles(files) {
+    const toUpload = [...files].filter(f=>f.type.startsWith('image/')).slice(0, 5 - uploadedImageUrls.length);
+    if (!toUpload.length) return;
+    toast('⏳ Subiendo imágenes...');
+    for (const file of toUpload) {
+      try {
+        const url = await uploadImage(file);
+        uploadedImageUrls.push(url);
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.cssText = 'height:68px;border-radius:.6rem;cursor:zoom-in';
+        img.onclick = () => openLb(url);
+        uploadedPreviewsEl.appendChild(img);
+      } catch(e) {
+        toast('Error subiendo una imagen: ' + e.message);
+        console.error(e);
+      }
+    }
+    toast('✅ Imágenes subidas correctamente.');
+  }
+
+  document.getElementById('listingForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const urlImgs=[...document.querySelectorAll('.img-url-input')].map(i=>i.value.trim()).filter(Boolean);
+    const allImgs=[...urlImgs,...uploadedImageUrls];
+    const editId=document.getElementById('editId').value;
+    const prop = {
+      title: document.getElementById('fTitle').value.trim(),
+      price: document.getElementById('fPrice').value.trim(),
+      location: document.getElementById('fLocation').value.trim(),
+      tag: document.getElementById('fTag').value,
+      features: document.getElementById('fFeatures').value.trim(),
+      description: document.getElementById('fDescription').value.trim(),
+      images: allImgs.length ? allImgs : ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80']
+    };
+    try {
+      if (editId) { await sbUpdate('properties', editId, prop); }
+      else { await sbInsert('properties', prop); }
+      e.currentTarget.reset();
+      document.getElementById('imgUrlsContainer').innerHTML='<input class="img-url-input" type="url" placeholder="https://… (imagen principal)"><input class="img-url-input" type="url" placeholder="https://… (imagen 2)"><input class="img-url-input" type="url" placeholder="https://… (imagen 3, opcional)">';
+      document.getElementById('thumbPreview').innerHTML='';
+      document.getElementById('uploadedPreviews').innerHTML='';
+      uploadedImageUrls.length=0;
+      document.getElementById('editId').value='';
+      document.getElementById('listingFormTitle').textContent='Añadir anuncio';
+      document.getElementById('listingSubmitBtn').textContent='Publicar anuncio';
+      await renderAll();
+      toast(editId?'✅ Anuncio actualizado.':'✅ Anuncio publicado.');
+      document.querySelectorAll('.sidebar-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+      document.querySelector('[data-pane="listings"]').classList.add('active');
+      document.getElementById('pane-listings').classList.add('active');
+    } catch(err) { toast('Error al guardar: ' + err.message); console.error(err); }
+  });
+
+  // ── Edit modal ──
+  async function openEditModal(id) {
+    try {
+      const rows = await sbSelect('properties', `id=eq.${id}`);
+      const p = rows[0]; if(!p) return;
+      document.getElementById('editModalId').value = id;
+      document.getElementById('eTitle').value       = p.title||'';
+      document.getElementById('ePrice').value       = p.price||'';
+      document.getElementById('eLocation').value    = p.location||'';
+      document.getElementById('eTag').value         = p.tag||'Venta';
+      document.getElementById('eFeatures').value    = p.features||'';
+      document.getElementById('eDescription').value = p.description||'';
+
+      // Load current images into edit modal
+      const imgs = Array.isArray(p.images) ? p.images : [];
+      const editImgContainer = document.getElementById('eImagesContainer');
+      editImgContainer.innerHTML = imgs.map((url,i) => `
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;">
+          <img src="${esc(url)}" style="height:48px;border-radius:.5rem;object-fit:cover;width:64px;">
+          <input type="url" class="e-img-input" value="${esc(url)}" placeholder="URL imagen ${i+1}" style="flex:1;">
+          <button type="button" class="btn btn-danger btn-xs e-img-del">✕</button>
+        </div>`).join('') + `<button type="button" id="eAddImgUrl" class="btn btn-outline btn-xs" style="margin-top:.5rem;">+ Añadir URL</button>
+        <div style="margin-top:.6rem;">
+          <label style="font-size:.85rem;font-weight:700;">O sube fotos desde tu ordenador</label>
+          <input type="file" id="eFileInput" accept="image/*" multiple style="margin-top:.4rem;display:block;">
+          <div id="eUploadedPreviews" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem;"></div>
+        </div>`;
+
+      const eUploadedUrls = [];
+      document.getElementById('eFileInput').addEventListener('change', async function() {
+        const files = [...this.files].filter(f=>f.type.startsWith('image/')).slice(0, 5);
+        toast('⏳ Subiendo imágenes...');
+        for (const file of files) {
+          try {
+            const url = await uploadImage(file);
+            eUploadedUrls.push(url);
+            const img = document.createElement('img');
+            img.src = url; img.style.cssText='height:56px;border-radius:.5rem;object-fit:cover;';
+            document.getElementById('eUploadedPreviews').appendChild(img);
+          } catch(e) { toast('Error: ' + e.message); }
+        }
+        toast('✅ Imágenes subidas.');
+      });
+
+      editImgContainer.querySelectorAll('.e-img-del').forEach(btn => btn.addEventListener('click', () => btn.closest('div').remove()));
+      document.getElementById('eAddImgUrl').addEventListener('click', () => {
+        const div = document.createElement('div');
+        div.style.cssText='display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;';
+        div.innerHTML=`<input type="url" class="e-img-input" placeholder="https://…" style="flex:1;"><button type="button" class="btn btn-danger btn-xs e-img-del">✕</button>`;
+        div.querySelector('.e-img-del').addEventListener('click', () => div.remove());
+        editImgContainer.insertBefore(div, document.getElementById('eAddImgUrl'));
+      });
+
+      document.getElementById('editModal').classList.remove('hidden');
+
+      document.getElementById('saveEditBtn').onclick = async () => {
+        const urlImgs = [...editImgContainer.querySelectorAll('.e-img-input')].map(i=>i.value.trim()).filter(Boolean);
+        const allImgs = [...urlImgs, ...eUploadedUrls];
+        const updated = {
+          title:       document.getElementById('eTitle').value.trim(),
+          price:       document.getElementById('ePrice').value.trim(),
+          location:    document.getElementById('eLocation').value.trim(),
+          tag:         document.getElementById('eTag').value,
+          features:    document.getElementById('eFeatures').value.trim(),
+          description: document.getElementById('eDescription').value.trim(),
+          images:      allImgs.length ? allImgs : imgs
+        };
+        try {
+          await sbUpdate('properties', id, updated);
+          document.getElementById('editModal').classList.add('hidden');
+          await renderAll();
+          toast('✅ Anuncio actualizado.');
+        } catch(err) { toast('Error: ' + err.message); }
+      };
+    } catch(e) { toast('Error al cargar el anuncio.'); console.error(e); }
+  }
+
+  ['closeEditModal','closeEditModal2'].forEach(id=>{
+    document.getElementById(id).addEventListener('click',()=>document.getElementById('editModal').classList.add('hidden'));
+  });
+
+  // ── Messages ──
+  async function renderMessages() {
+    try {
+      const msgs = await sbSelect('messages','order=created_at.desc');
+      const el = document.getElementById('messagesList');
+      if (!msgs.length) { el.innerHTML='<div class="empty"><p>No hay mensajes.</p></div>'; return; }
+      el.innerHTML = msgs.map(m=>`<div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-name">${esc(m.name)}</div>
+            <div class="card-meta">${esc(m.phone)} · <a href="mailto:${esc(m.email)}" style="color:var(--c-gold)">${esc(m.email)}</a> · ${esc(m.createdat||'')}</div>
+          </div>
+          <span class="badge badge-${m.status==='new'?'new':'read'}">${m.status==='new'?'Nuevo':'Leído'}</span>
+        </div>
+        <div class="card-body">${esc(m.message)}</div>
+        <div class="card-actions">
+          ${m.status==='new'?`<button class="btn btn-outline btn-xs" onclick="markMsgRead('${m.id}')">Marcar como leído</button>`:''}
+          <button class="btn btn-danger btn-xs" onclick="deleteMsg('${m.id}')">🗑️ Eliminar</button>
+        </div>
+      </div>`).join('');
+    } catch(e) { console.error(e); }
+  }
+
+  async function markMsgRead(id) {
+    try { await sbUpdate('messages', id, {status:'read'}); await renderAll(); toast('Mensaje marcado como leído.'); }
+    catch(e) { toast('Error: '+e.message); }
+  }
+  async function deleteMsg(id) {
+    if (!confirm('¿Eliminar este mensaje?')) return;
+    try { await sbDelete('messages', id); await renderAll(); toast('Mensaje eliminado.'); }
+    catch(e) { toast('Error: '+e.message); }
+  }
+
+  // ── Appointments ──
+  async function renderAppointments() {
+    try {
+      const appts = await sbSelect('appointments','order=created_at.desc');
+      const el = document.getElementById('appointmentsList');
+      if (!appts.length) { el.innerHTML='<div class="empty"><p>No hay citas.</p></div>'; return; }
+      el.innerHTML = appts.map(a=>`<div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-name">${esc(a.name)}</div>
+            <div class="card-meta">📅 ${esc(a.date)} · 📞 <a href="tel:${esc(a.phone)}" style="color:var(--c-gold)">${esc(a.phone)}</a> · ✉️ <a href="mailto:${esc(a.email)}" style="color:var(--c-gold)">${esc(a.email)}</a></div>
+          </div>
+          ${badgeAppt(a.status)}
+        </div>
+        <div class="card-body"><strong>Motivo:</strong> ${esc(a.reason)}</div>
+        <div class="card-actions">
+          ${a.status==='pending'?`<button class="btn btn-success btn-xs" onclick="updateAppt('${a.id}','accepted')">✅ Aceptar</button><button class="btn btn-danger btn-xs" onclick="updateAppt('${a.id}','rejected')">❌ Rechazar</button>`:''}
+          ${a.status==='accepted'?`<button class="btn btn-outline btn-xs" onclick="updateAppt('${a.id}','rejected')">Rechazar</button>`:''}
+          ${a.status==='rejected'?`<button class="btn btn-success btn-xs" onclick="updateAppt('${a.id}','accepted')">Aceptar</button>`:''}
+          <button class="btn btn-danger btn-xs" onclick="deleteAppt('${a.id}')">🗑️ Eliminar</button>
+        </div>
+      </div>`).join('');
+    } catch(e) { console.error(e); }
+  }
+
+  async function updateAppt(id, status) {
+    try { await sbUpdate('appointments', id, {status}); await renderAll(); toast(status==='accepted'?'✅ Cita aceptada.':'Cita rechazada.'); }
+    catch(e) { toast('Error: '+e.message); }
+  }
+  async function deleteAppt(id) {
+    if (!confirm('¿Eliminar esta cita?')) return;
+    try { await sbDelete('appointments', id); await renderAll(); toast('Cita eliminada.'); }
+    catch(e) { toast('Error: '+e.message); }
+  }
+
+  // ── Clients ──
+  async function renderClients() {
+    try {
+      const [msgs, appts] = await Promise.all([sbSelect('messages'), sbSelect('appointments')]);
+      const map = {};
+      [...msgs,...appts].forEach(r=>{
+        const key=(r.email||'').toLowerCase(); if(!key)return;
+        if(!map[key]) map[key]={name:r.name,email:r.email,phone:r.phone,msgs:0,appts:0};
+        if(r.reason!==undefined) map[key].appts++; else map[key].msgs++;
+      });
+      const el = document.getElementById('clientsList');
+      const clients = Object.values(map);
+      if (!clients.length) { el.innerHTML='<div class="empty"><p>Aún no hay clientes.</p></div>'; return; }
+      el.innerHTML = clients.map(c=>`<div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-name">${esc(c.name)}</div>
+            <div class="card-meta">📞 <a href="tel:${esc(c.phone)}" style="color:var(--c-gold)">${esc(c.phone)}</a> · ✉️ <a href="mailto:${esc(c.email)}" style="color:var(--c-gold)">${esc(c.email)}</a></div>
+          </div>
+          <div style="display:flex;gap:.5rem">
+            <span class="badge badge-new">${c.msgs} msgs</span>
+            <span class="badge badge-pending">${c.appts} citas</span>
+          </div>
+        </div>
+      </div>`).join('');
+    } catch(e) { console.error(e); }
+  }
+
+  // ── Lightbox ──
+  function openLb(src){
+    document.getElementById('lbImg').src=src;
+    document.getElementById('lightbox').classList.remove('hidden');
+  }
+  document.getElementById('lbClose').addEventListener('click',()=>document.getElementById('lightbox').classList.add('hidden'));
+  document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.add('hidden')});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      document.getElementById('lightbox').classList.add('hidden');
+      document.getElementById('editModal').classList.add('hidden');
+    }
+  });
+</script>
+</body>
+</html>
