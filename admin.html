@@ -886,9 +886,67 @@
     } catch(e) { console.error(e); }
   }
 
+  // ── Resend email ──
+  const RESEND_KEY = 're_KcQiM2E4_J36x8jHQisnDiXZoD4wXovmX';
+
+  async function sendConfirmationEmail(appt) {
+    const timeText = appt.time ? ` a las ${appt.time}` : '';
+    const html = `
+      <div style="font-family:Georgia,serif;max-width:580px;margin:0 auto;background:#fdfcf9;border:1px solid #e8e4db;border-radius:16px;overflow:hidden;">
+        <div style="background:#b8873a;padding:28px 32px;">
+          <h1 style="margin:0;color:#fff;font-size:22px;letter-spacing:.5px;">Roman Inmobiliaria</h1>
+          <p style="margin:4px 0 0;color:rgba(255,255,255,.8);font-size:13px;">Tu hogar, nuestra misión</p>
+        </div>
+        <div style="padding:32px;">
+          <h2 style="margin:0 0 8px;color:#1c1a16;font-size:20px;">✅ Cita confirmada</h2>
+          <p style="color:#6b6659;margin:0 0 24px;">Hola <strong>${appt.name}</strong>, tu cita ha sido confirmada. Aquí tienes los detalles:</p>
+          <div style="background:#f5f3ee;border-radius:10px;padding:20px;margin-bottom:24px;">
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><td style="padding:6px 0;color:#a09a8e;font-size:13px;width:120px;">📅 Fecha</td><td style="padding:6px 0;font-weight:700;color:#1c1a16;">${appt.date}${timeText}</td></tr>
+              <tr><td style="padding:6px 0;color:#a09a8e;font-size:13px;">👤 Nombre</td><td style="padding:6px 0;font-weight:700;color:#1c1a16;">${appt.name}</td></tr>
+              <tr><td style="padding:6px 0;color:#a09a8e;font-size:13px;">📞 Teléfono</td><td style="padding:6px 0;font-weight:700;color:#1c1a16;">${appt.phone}</td></tr>
+              <tr><td style="padding:6px 0;color:#a09a8e;font-size:13px;">📝 Motivo</td><td style="padding:6px 0;color:#1c1a16;">${appt.reason}</td></tr>
+            </table>
+          </div>
+          <p style="color:#6b6659;font-size:14px;margin:0 0 8px;">Si necesitas cambiar o cancelar la cita, llámanos:</p>
+          <p style="color:#b8873a;font-weight:700;font-size:16px;margin:0 0 24px;">📞 +34 600 000 000</p>
+          <p style="color:#a09a8e;font-size:12px;margin:0;">Roman Inmobiliaria · Calle Ejemplo 12, Sevilla · Lun–Vie 9:00–19:00</p>
+        </div>
+      </div>`;
+
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + RESEND_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: 'Roman Inmobiliaria <onboarding@resend.dev>',
+        to: [appt.email],
+        subject: `✅ Cita confirmada el ${appt.date}${timeText} – Roman Inmobiliaria`,
+        html
+      })
+    });
+  }
+
   async function updateAppt(id, status) {
-    try { await sbUpdate('appointments', id, {status}); await renderAll(); toast(status==='accepted'?'✅ Cita aceptada.':'Cita rechazada.'); }
-    catch(e) { toast('Error: '+e.message); }
+    try {
+      // Obtener datos de la cita antes de actualizar (para el email)
+      const rows = await sbSelect('appointments', `id=eq.${id}`);
+      await sbUpdate('appointments', id, {status});
+      await renderAll();
+      if (status === 'accepted' && rows.length && rows[0].email) {
+        try {
+          await sendConfirmationEmail(rows[0]);
+          toast('✅ Cita aceptada y email enviado al cliente.');
+        } catch(emailErr) {
+          console.error('Error enviando email:', emailErr);
+          toast('✅ Cita aceptada (el email no se pudo enviar).');
+        }
+      } else {
+        toast(status === 'accepted' ? '✅ Cita aceptada.' : 'Cita rechazada.');
+      }
+    } catch(e) { toast('Error: '+e.message); }
   }
   async function deleteAppt(id) {
     if (!confirm('¿Eliminar esta cita?')) return;
