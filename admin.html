@@ -714,6 +714,7 @@
   }
 
   document.getElementById('listingForm').addEventListener('submit', async e=>{
+    const form = e.currentTarget;
     e.preventDefault();
     const urlImgs=[...document.querySelectorAll('.img-url-input')].map(i=>i.value.trim()).filter(Boolean);
     const allImgs=[...urlImgs,...uploadedImageUrls];
@@ -730,7 +731,7 @@
     try {
       if (editId) { await sbUpdate('properties', editId, prop); }
       else { await sbInsert('properties', prop); }
-      e.currentTarget.reset();
+      form.reset();
       document.getElementById('imgUrlsContainer').innerHTML='<input class="img-url-input" type="url" placeholder="https://… (imagen principal)"><input class="img-url-input" type="url" placeholder="https://… (imagen 2)"><input class="img-url-input" type="url" placeholder="https://… (imagen 3, opcional)">';
       document.getElementById('thumbPreview').innerHTML='';
       document.getElementById('uploadedPreviews').innerHTML='';
