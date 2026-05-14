@@ -1010,7 +1010,8 @@
         if (!motivo)  { toast('⚠️ Selecciona el motivo del contacto.'); return; }
         if (!message) { toast('⚠️ Escribe un mensaje.'); return; }
 
-        await sbInsert('messages', { name, phone, email, motivo, message, status: 'new' });
+        const fullMessage = `[${motivo}] ${message}`;
+        await sbInsert('messages', { name, phone, email, message: fullMessage, status: 'new' });
 
         document.getElementById('unifiedForm').reset();
         toast('✅ Mensaje enviado correctamente. Te respondemos pronto.');
