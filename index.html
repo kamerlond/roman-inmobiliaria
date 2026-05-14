@@ -327,6 +327,23 @@
     .pm-desc { font-size:.93rem; line-height:1.65; color:var(--c-muted); }
     @media (max-width:700px) { .pm-card { grid-template-columns:1fr; } .pm-gallery { border-radius:1.5rem 1.5rem 0 0; min-height:220px; } }
 
+
+    /* ══════════════════ FORM TYPE SWITCHER ══════════════════ */
+    .form-type-switcher {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
+      background: var(--c-surface2); border: 1px solid var(--c-border);
+      border-radius: var(--r-full); padding: .35rem;
+    }
+    .type-tab {
+      display: flex; align-items: center; justify-content: center; gap: .55rem;
+      padding: .7rem 1rem; border-radius: var(--r-full); font-weight: 700; font-size: .9rem;
+      color: var(--c-muted); transition: background .18s, color .18s, box-shadow .18s;
+    }
+    .type-tab.active {
+      background: var(--c-surface); color: var(--c-gold);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--c-divider);
+    }
+    .type-tab:hover:not(.active) { color: var(--c-text); }
   </style>
 </head>
 <body>
@@ -427,183 +444,175 @@
 
     <div class="divider wrap"></div>
 
-    <!-- ════ CITAS ════ -->
-    <section id="citas" aria-labelledby="citasTitle">
-      <div class="wrap">
-        <div class="section-header">
-          <div>
-            <span class="pill">Agenda</span>
-            <h2 class="section-title" id="citasTitle" style="margin-top:.6rem;">Solicitar una cita</h2>
-            <p class="section-sub">Elige un día disponible en el calendario y rellena el formulario. Nos pondremos en contacto para confirmártela.</p>
-          </div>
-        </div>
-
-        <div class="grid2">
-          <!-- Calendar -->
-          <div class="calendar-section" aria-label="Calendario de disponibilidad">
-            <div class="cal-nav">
-              <button id="calPrev" aria-label="Mes anterior">&#8592;</button>
-              <h3 id="calMonthLabel"></h3>
-              <button id="calNext" aria-label="Mes siguiente">&#8594;</button>
-            </div>
-            <div class="cal-grid" id="calGrid" role="grid" aria-label="Días del mes"></div>
-            <div class="cal-legend">
-              <span><span class="dot dot-free"></span> Disponible</span>
-              <span><span class="dot dot-busy"></span> Ocupado</span>
-              <span><span class="dot dot-sel"></span> Seleccionado</span>
-            </div>
-            <p id="calSelMsg" style="margin-top:1rem; color:var(--c-gold); font-weight:600; font-size:.9rem; min-height:1.3em;"></p>
-          </div>
-
-          <!-- Appointment form -->
-          <div class="form-card">
-            <p class="form-title">Tus datos para la cita</p>
-            <p class="form-sub">Selecciona un día libre arriba y rellena el formulario. Te llamaremos para confirmar la cita.</p>
-            <form id="apptForm" novalidate>
-              <div style="display:grid;gap:1rem;">
-                <div class="field-row">
-                  <div class="field">
-                    <label for="apptName">Nombre y apellidos *</label>
-                    <input id="apptName" name="name" type="text" required placeholder="Ej. Ana López Martín">
-                  </div>
-                  <div class="field">
-                    <label for="apptPhone">Teléfono *</label>
-                    <input id="apptPhone" name="phone" type="tel" required placeholder="600 000 000">
-                  </div>
-                </div>
-                <div class="field-row">
-                  <div class="field">
-                    <label for="apptEmail">Correo electrónico *</label>
-                    <input id="apptEmail" name="email" type="email" required placeholder="correo@ejemplo.com">
-                  </div>
-                  <div class="field">
-                    <label for="apptDateInput">Fecha elegida *</label>
-                    <div style="position:relative;">
-                      <input id="apptDateInput" name="date" type="text" readonly placeholder="← Elige día en el calendario" required style="cursor:default; padding-right:2.5rem;">
-                      <svg style="position:absolute;right:.85rem;top:50%;transform:translateY(-50%);pointer-events:none;opacity:.45;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </div>
-                  </div>
-                </div>
-                <div class="field">
-                  <label for="apptTime">Hora preferida *</label>
-                  <select id="apptTime" name="time" required>
-                    <option value="">Selecciona primero una fecha…</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="apptReason">Motivo de la cita *</label>
-                  <textarea id="apptReason" name="reason" required placeholder="Quiero visitar una propiedad, vender mi casa, recibir asesoramiento…"></textarea>
-                </div>
-                <p class="required-note">* Campos obligatorios. La cita quedará pendiente hasta que te confirmemos por teléfono.</p>
-              </div>
-              <div class="form-btns">
-                <button class="btn btn-gold" type="submit">Enviar solicitud</button>
-                <button class="btn btn-outline" type="reset">Limpiar</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <div class="divider wrap"></div>
 
-    <!-- ════ CONTACTO ════ -->
+    <!-- ════ CONTACTO / CITA UNIFICADO ════ -->
     <section id="contacto" aria-labelledby="contactTitle">
       <div class="wrap">
         <div class="section-header">
           <div>
-            <span class="pill">Contacto</span>
-            <h2 class="section-title" id="contactTitle" style="margin-top:.6rem;">Escríbenos</h2>
-            <p class="section-sub">Rellena el formulario y te respondemos lo antes posible.</p>
+            <span class="pill">Contacto &amp; Citas</span>
+            <h2 class="section-title" id="contactTitle" style="margin-top:.6rem;">¿En qué podemos ayudarte?</h2>
+            <p class="section-sub">Elige si quieres enviarnos un mensaje o solicitar una cita. Rellena el formulario y nos ponemos en contacto contigo.</p>
           </div>
         </div>
+
         <div class="contact-grid">
+
+          <!-- ── FORMULARIO UNIFICADO ── -->
           <div class="form-card">
-            <p class="form-title">Formulario de contacto</p>
-            <p class="form-sub">Introduce tus datos y cuéntanos qué necesitas.</p>
-            <form id="contactForm" novalidate>
+            <div class="form-type-switcher" role="group" aria-label="Tipo de consulta">
+              <button type="button" class="type-tab active" data-type="message" id="tabMessage">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Enviar mensaje
+              </button>
+              <button type="button" class="type-tab" data-type="appointment" id="tabAppointment">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Pedir cita
+              </button>
+            </div>
+
+            <p class="form-sub" id="formSubText" style="margin-top:1.1rem;">Cuéntanos qué necesitas y te respondemos lo antes posible.</p>
+
+            <form id="unifiedForm" novalidate>
               <div style="display:grid;gap:1rem;">
+
+                <!-- Datos personales — siempre visibles -->
                 <div class="field-row">
                   <div class="field">
-                    <label for="cName">Nombre y apellidos *</label>
-                    <input id="cName" name="name" type="text" required placeholder="Tu nombre completo">
+                    <label for="uName">Nombre y apellidos *</label>
+                    <input id="uName" name="name" type="text" required placeholder="Ej. Ana López Martín">
                   </div>
                   <div class="field">
-                    <label for="cPhone">Teléfono *</label>
-                    <input id="cPhone" name="phone" type="tel" required placeholder="600 000 000">
+                    <label for="uPhone">Teléfono *</label>
+                    <input id="uPhone" name="phone" type="tel" required placeholder="600 000 000">
                   </div>
                 </div>
                 <div class="field">
-                  <label for="cEmail">Correo electrónico *</label>
-                  <input id="cEmail" name="email" type="email" required placeholder="correo@ejemplo.com">
+                  <label for="uEmail">Correo electrónico *</label>
+                  <input id="uEmail" name="email" type="email" required placeholder="correo@ejemplo.com">
                 </div>
-                <div class="field">
-                  <label for="cMotivo">Motivo del contacto *</label>
-                  <select id="cMotivo" name="motivo" required>
-                    <option value="">Selecciona un motivo…</option>
-                    <option>Información sobre una propiedad</option>
-                    <option>Quiero vender mi propiedad</option>
-                    <option>Solicitar valoración</option>
-                    <option>Otro asunto</option>
-                  </select>
+
+                <!-- ── CAMPOS MENSAJE ── -->
+                <div id="msgFields">
+                  <div style="display:grid;gap:1rem;">
+                    <div class="field">
+                      <label for="uMotivo">Motivo del contacto *</label>
+                      <select id="uMotivo" name="motivo">
+                        <option value="">Selecciona un motivo…</option>
+                        <option>Información sobre una propiedad</option>
+                        <option>Quiero vender mi propiedad</option>
+                        <option>Solicitar valoración</option>
+                        <option>Otro asunto</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="uMsg">Mensaje *</label>
+                      <textarea id="uMsg" name="message" placeholder="Cuéntanos en qué podemos ayudarte…"></textarea>
+                    </div>
+                  </div>
                 </div>
-                <div class="field">
-                  <label for="cMsg">Mensaje *</label>
-                  <textarea id="cMsg" name="message" required placeholder="Cuéntanos en qué podemos ayudarte…"></textarea>
+
+                <!-- ── CAMPOS CITA ── -->
+                <div id="apptFields" class="hidden">
+                  <div style="display:grid;gap:1rem;">
+                    <div class="field-row">
+                      <div class="field">
+                        <label for="apptDateInput">Fecha elegida *</label>
+                        <div style="position:relative;">
+                          <input id="apptDateInput" name="date" type="text" readonly placeholder="← Elige día en el calendario" style="cursor:default;padding-right:2.5rem;">
+                          <svg style="position:absolute;right:.85rem;top:50%;transform:translateY(-50%);pointer-events:none;opacity:.45;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                      </div>
+                      <div class="field">
+                        <label for="apptTime">Hora preferida *</label>
+                        <select id="apptTime" name="time">
+                          <option value="">Selecciona primero una fecha…</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label for="apptReason">Motivo de la cita *</label>
+                      <textarea id="apptReason" name="reason" placeholder="Quiero visitar una propiedad, vender mi casa, recibir asesoramiento…"></textarea>
+                    </div>
+                    <p class="required-note">La cita quedará pendiente hasta que te confirmemos por teléfono.</p>
+                  </div>
                 </div>
+
+                <p class="required-note">* Campos obligatorios.</p>
               </div>
               <div class="form-btns">
-                <button class="btn btn-gold" type="submit">Enviar mensaje</button>
-                <button class="btn btn-outline" type="reset">Limpiar</button>
+                <button class="btn btn-gold" type="submit" id="uSubmitBtn">Enviar mensaje</button>
+                <button class="btn btn-outline" type="button" id="uResetBtn">Limpiar</button>
               </div>
             </form>
           </div>
 
-          <div class="contact-info-card">
-            <span class="pill" style="margin-bottom:1.25rem; display:inline-flex;">Dónde encontrarnos</span>
-            <div class="contact-detail">
-              <div class="c-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <!-- ── COLUMNA DERECHA: calendario (cita) + info de contacto ── -->
+          <div style="display:grid;gap:1.5rem;align-content:start;">
+
+            <!-- Calendario — visible sólo en modo cita -->
+            <div class="calendar-section hidden" id="calendarBlock" aria-label="Calendario de disponibilidad">
+              <div class="cal-nav">
+                <button id="calPrev" aria-label="Mes anterior">&#8592;</button>
+                <h3 id="calMonthLabel"></h3>
+                <button id="calNext" aria-label="Mes siguiente">&#8594;</button>
               </div>
-              <div>
-                <div class="c-label">Dirección</div>
-                <div class="c-value">Calle San Sebastián 40, Benacazón, Sevilla</div>
+              <div class="cal-grid" id="calGrid" role="grid" aria-label="Días del mes"></div>
+              <div class="cal-legend">
+                <span><span class="dot dot-free"></span> Disponible</span>
+                <span><span class="dot dot-busy"></span> Ocupado</span>
+                <span><span class="dot dot-sel"></span> Seleccionado</span>
               </div>
+              <p id="calSelMsg" style="margin-top:1rem;color:var(--c-gold);font-weight:600;font-size:.9rem;min-height:1.3em;"></p>
             </div>
-            <div class="contact-detail">
-              <div class="c-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.36 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.91-1.83a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.79 15"/></svg>
+
+            <!-- Info de contacto — siempre visible -->
+            <div class="contact-info-card">
+              <span class="pill" style="margin-bottom:1.25rem; display:inline-flex;">Dónde encontrarnos</span>
+              <div class="contact-detail">
+                <div class="c-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div>
+                  <div class="c-label">Dirección</div>
+                  <div class="c-value">Calle San Sebastián 40, Benacazón, Sevilla</div>
+                </div>
               </div>
-              <div>
-                <div class="c-label">Teléfono</div>
-                <div class="c-value">616 163 138</div>
+              <div class="contact-detail">
+                <div class="c-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.36 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.91-1.83a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.79 15"/></svg>
+                </div>
+                <div>
+                  <div class="c-label">Teléfono</div>
+                  <div class="c-value">616 163 138</div>
+                </div>
               </div>
-            </div>
-            <div class="contact-detail">
-              <div class="c-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <div class="contact-detail">
+                <div class="c-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <div>
+                  <div class="c-label">Email</div>
+                  <div class="c-value">romaninmobiliaria@gmail.com</div>
+                </div>
               </div>
-              <div>
-                <div class="c-label">Email</div>
-                <div class="c-value">romaninmobiliaria@gmail.com</div>
-              </div>
-            </div>
-            <div class="contact-detail">
-              <div class="c-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              </div>
-              <div>
-                <div class="c-label">Horario</div>
-                <div class="c-value">Lun–Vie 10:00–14:00 / 17:30–20:30</div>
+              <div class="contact-detail">
+                <div class="c-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div>
+                  <div class="c-label">Horario</div>
+                  <div class="c-value">Lun–Vie 10:00–14:00 / 17:30–20:30</div>
+                </div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
   </main>
-
   <!-- Property detail modal -->
   <div id="propModal" class="hidden" role="dialog" aria-modal="true" aria-label="Detalle de propiedad" tabindex="-1">
     <div class="pm-card">
@@ -785,7 +794,8 @@
 
     document.getElementById('pmCitaBtn').onclick = () => {
       overlay.classList.add('hidden');
-      document.getElementById('citas').scrollIntoView({behavior:'smooth'});
+      setFormType('appointment');
+      document.getElementById('contacto').scrollIntoView({behavior:'smooth'});
     };
 
     overlay.classList.remove('hidden');
@@ -923,51 +933,106 @@
     renderCalendar();
   });
 
-  // ── Appointment form ──
-  document.getElementById('apptForm').addEventListener('submit', async e => {
-    e.preventDefault();
-    if (!selectedDate) { toast('Selecciona primero un día en el calendario.'); return; }
-    const form = document.getElementById('apptForm');
-    const dateStr = document.getElementById('apptDateInput').value;
-    const payload = {
-      name:   document.getElementById('apptName').value.trim(),
-      phone:  document.getElementById('apptPhone').value.trim(),
-      email:  document.getElementById('apptEmail').value.trim(),
-      date:   dateStr,
-      time:   document.getElementById('apptTime').value,
-      reason: document.getElementById('apptReason').value.trim(),
-      status: 'pending'
-    };
-    try {
-      await sbInsert('appointments', payload);
-      form.reset();
-      selectedDate = null;
-      document.getElementById('apptDateInput').value = '';
-      document.getElementById('apptTime').innerHTML = '<option value="">Selecciona primero una fecha…</option>';
-      const msg = document.getElementById('calSelMsg');
-      if (msg) msg.textContent = '';
-      await loadBusyDays();
-      toast('✅ Solicitud enviada. Te llamaremos para confirmar.');
-    } catch(err) {
-      toast('Error: ' + (err.message || 'Inténtalo de nuevo.')); console.error(err);
-    }
+  // ── Form type switcher ──
+  let currentFormType = 'message'; // 'message' | 'appointment'
+
+  function setFormType(type) {
+    currentFormType = type;
+    const isAppt = type === 'appointment';
+
+    // Tab styling
+    document.getElementById('tabMessage').classList.toggle('active', !isAppt);
+    document.getElementById('tabAppointment').classList.toggle('active', isAppt);
+
+    // Show/hide field groups
+    document.getElementById('msgFields').classList.toggle('hidden', isAppt);
+    document.getElementById('apptFields').classList.toggle('hidden', !isAppt);
+    document.getElementById('calendarBlock').classList.toggle('hidden', !isAppt);
+
+    // Update sub-text and button label
+    document.getElementById('formSubText').textContent = isAppt
+      ? 'Selecciona un día en el calendario y rellena tus datos. Te llamaremos para confirmar.'
+      : 'Cuéntanos qué necesitas y te respondemos lo antes posible.';
+    document.getElementById('uSubmitBtn').textContent = isAppt
+      ? 'Enviar solicitud de cita'
+      : 'Enviar mensaje';
+
+    // Toggle required attributes
+    const msgInputs  = document.querySelectorAll('#msgFields input, #msgFields select, #msgFields textarea');
+    const apptInputs = document.querySelectorAll('#apptFields input, #apptFields select, #apptFields textarea');
+    msgInputs.forEach(el  => el.required = !isAppt);
+    apptInputs.forEach(el => el.required = isAppt);
+
+    // Reset on switch
+    document.getElementById('unifiedForm').reset();
+    selectedDate = null;
+    document.getElementById('apptDateInput').value = '';
+    document.getElementById('apptTime').innerHTML = '<option value="">Selecciona primero una fecha…</option>';
+    const calMsg = document.getElementById('calSelMsg');
+    if (calMsg) calMsg.textContent = '';
+    renderCalendar();
+  }
+
+  document.getElementById('tabMessage').addEventListener('click',     () => setFormType('message'));
+  document.getElementById('tabAppointment').addEventListener('click', () => setFormType('appointment'));
+
+  document.getElementById('uResetBtn').addEventListener('click', () => {
+    document.getElementById('unifiedForm').reset();
+    selectedDate = null;
+    document.getElementById('apptDateInput').value = '';
+    document.getElementById('apptTime').innerHTML = '<option value="">Selecciona primero una fecha…</option>';
+    const calMsg = document.getElementById('calSelMsg');
+    if (calMsg) calMsg.textContent = '';
+    renderCalendar();
   });
 
-  // ── Contact form ──
-  document.getElementById('contactForm').addEventListener('submit', async e => {
+  // ── Unified form submit ──
+  document.getElementById('unifiedForm').addEventListener('submit', async e => {
     e.preventDefault();
-    const form = document.getElementById('contactForm');
-    try {
-      await sbInsert('messages', {
-        name:    document.getElementById('cName').value.trim(),
-        email:   document.getElementById('cEmail').value.trim(),
-        phone:   document.getElementById('cPhone').value.trim(),
-        message: document.getElementById('cMsg').value.trim()
-      });
-      form.reset();
-      toast('✅ Mensaje enviado correctamente. Te respondemos pronto.');
-    } catch(err) {
-      toast('Error al enviar el mensaje. Inténtalo de nuevo.'); console.error(err);
+    const name  = document.getElementById('uName').value.trim();
+    const phone = document.getElementById('uPhone').value.trim();
+    const email = document.getElementById('uEmail').value.trim();
+
+    if (currentFormType === 'appointment') {
+      // CITA
+      if (!selectedDate) { toast('⚠️ Selecciona primero un día en el calendario.'); return; }
+      const apptTime = document.getElementById('apptTime').value;
+      if (!apptTime) { toast('⚠️ Selecciona una hora para la cita.'); return; }
+      const reason = document.getElementById('apptReason').value.trim();
+      if (!reason) { toast('⚠️ Indica el motivo de la cita.'); return; }
+      const payload = {
+        name, phone, email,
+        date:   document.getElementById('apptDateInput').value,
+        time:   apptTime,
+        reason, status: 'pending'
+      };
+      try {
+        await sbInsert('appointments', payload);
+        document.getElementById('unifiedForm').reset();
+        selectedDate = null;
+        document.getElementById('apptDateInput').value = '';
+        document.getElementById('apptTime').innerHTML = '<option value="">Selecciona primero una fecha…</option>';
+        const calMsg = document.getElementById('calSelMsg');
+        if (calMsg) calMsg.textContent = '';
+        await loadBusyDays();
+        toast('✅ Solicitud enviada. Te llamaremos para confirmar.');
+      } catch(err) {
+        toast('Error: ' + (err.message || 'Inténtalo de nuevo.')); console.error(err);
+      }
+
+    } else {
+      // MENSAJE
+      const motivo  = document.getElementById('uMotivo').value;
+      const message = document.getElementById('uMsg').value.trim();
+      if (!motivo)  { toast('⚠️ Selecciona el motivo del contacto.'); return; }
+      if (!message) { toast('⚠️ Escribe un mensaje.'); return; }
+      try {
+        await sbInsert('messages', { name, phone, email, motivo, message });
+        document.getElementById('unifiedForm').reset();
+        toast('✅ Mensaje enviado. Te respondemos pronto.');
+      } catch(err) {
+        toast('Error al enviar el mensaje. Inténtalo de nuevo.'); console.error(err);
+      }
     }
   });
 
@@ -976,6 +1041,7 @@
   if (fy) fy.textContent = new Date().getFullYear();
 
   // ── Init ──
+  setFormType('message'); // start in message mode (sets required attrs correctly)
   loadProperties();
   loadBusyDays();
 
@@ -983,5 +1049,3 @@
     if (e.key === 'Escape') document.getElementById('propModal').classList.add('hidden');
   });
 </script>
-</body>
-</html>
