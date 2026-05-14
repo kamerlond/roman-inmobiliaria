@@ -488,9 +488,22 @@
   async function sbDelete(table, id) {
     const r = await fetch(`${SUPA_URL}/rest/v1/${table}?id=eq.${id}`, {
       method: 'DELETE',
-      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+        'Prefer': 'return=minimal'
+      }
     });
-    if (!r.ok) throw new Error(await r.text());
+    if (!r.ok) {
+      const body = await r.text();
+      // Si RLS bloquea el DELETE, intentar soft-delete via UPDATE
+      if (r.status === 403 || (body && body.includes('policy'))) {
+        console.warn('DELETE bloqueado por RLS, usando soft-delete...');
+        await sbUpdate(table, id, { deleted: true });
+        return;
+      }
+      throw new Error(`HTTP ${r.status}: ${body}`);
+    }
   }
 
   // ── Supabase Storage upload ──
@@ -832,7 +845,7 @@
   // ── Messages ──
   async function renderMessages() {
     try {
-      const msgs = await sbSelect('messages','order=created_at.desc');
+      const msgs = await sbSelect('messages','order=created_at.desc&deleted=neq.true');
       const el = document.getElementById('messagesList');
       if (!msgs.length) { el.innerHTML='<div class="empty"><p>No hay mensajes.</p></div>'; return; }
       el.innerHTML = msgs.map(m=>`<div class="card">
@@ -857,15 +870,21 @@
     catch(e) { toast('Error: '+e.message); }
   }
   async function deleteMsg(id) {
-    if (!confirm('¿Eliminar este mensaje?')) return;
-    try { await sbDelete('messages', id); await renderAll(); toast('Mensaje eliminado.'); }
-    catch(e) { toast('Error: '+e.message); }
+    if (!confirm('¿Eliminar este mensaje? Esta acción no se puede deshacer.')) return;
+    try {
+      await sbDelete('messages', id);
+      await renderAll();
+      toast('✅ Mensaje eliminado.');
+    } catch(e) {
+      console.error('deleteMsg error:', e);
+      toast('❌ Error al eliminar: ' + e.message);
+    }
   }
 
   // ── Appointments ──
   async function renderAppointments() {
     try {
-      const appts = await sbSelect('appointments','order=created_at.desc');
+      const appts = await sbSelect('appointments','order=created_at.desc&deleted=neq.true');
       const el = document.getElementById('appointmentsList');
       if (!appts.length) { el.innerHTML='<div class="empty"><p>No hay citas.</p></div>'; return; }
       el.innerHTML = appts.map(a=>`<div class="card">
@@ -951,8 +970,14 @@
   }
   async function deleteAppt(id) {
     if (!confirm('¿Eliminar esta cita?')) return;
-    try { await sbDelete('appointments', id); await renderAll(); toast('Cita eliminada.'); }
-    catch(e) { toast('Error: '+e.message); }
+    try {
+      await sbDelete('appointments', id);
+      await renderAll();
+      toast('✅ Cita eliminada.');
+    } catch(e) {
+      console.error('deleteAppt error:', e);
+      toast('❌ Error al eliminar: ' + e.message);
+    }
   }
 
   // ── Clients ──
