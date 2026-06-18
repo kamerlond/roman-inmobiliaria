@@ -1,14 +1,1037 @@
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Roman Inmobiliaria. Encuentra tu próxima vivienda, contacta con nosotros o pide una cita." />
-    <title>Roman Inmobiliaria · Tu hogar, nuestra misión</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roman Inmobiliaria – Tu hogar, nuestra misión</title>
+  <meta name="description" content="Roman Inmobiliaria. Encuentra tu próxima vivienda, contacta con nosotros o pide una cita.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --c-bg:        #f5f3ee;
+      --c-surface:   #fdfcf9;
+      --c-surface2:  #eeebe3;
+      --c-border:    #ddd8cc;
+      --c-divider:   #e8e4db;
+      --c-text:      #1c1a16;
+      --c-muted:     #6b6659;
+      --c-faint:     #a09a8e;
+      --c-inv:       #fdfcf9;
+      --c-gold:      #b8873a;
+      --c-gold-lt:   #f5e8d0;
+      --c-gold-dk:   #8c6427;
+      --c-err:       #a83240;
+      --c-ok:        #2d7a4f;
+      --shadow-sm:   0 1px 3px rgba(28,26,22,.07);
+      --shadow-md:   0 8px 28px rgba(28,26,22,.10);
+      --shadow-lg:   0 20px 56px rgba(28,26,22,.14);
+      --r-sm: .5rem; --r-md: .9rem; --r-lg: 1.4rem; --r-xl: 2rem; --r-full: 999px;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+      --max-w: 1200px;
+      --nav-h: 76px;
+    }
+    [data-theme="dark"] {
+      --c-bg:       #181510;
+      --c-surface:  #201d18;
+      --c-surface2: #272319;
+      --c-border:   #3a342a;
+      --c-divider:  #2e2a22;
+      --c-text:     #ede8df;
+      --c-muted:    #a8a090;
+      --c-faint:    #6e6860;
+      --c-inv:      #181510;
+      --c-gold:     #d4a355;
+      --c-gold-lt:  #2e2213;
+      --c-gold-dk:  #e8be7a;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,.2);
+      --shadow-md:  0 8px 28px rgba(0,0,0,.32);
+      --shadow-lg:  0 20px 56px rgba(0,0,0,.44);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 1rem); }
+    body { min-height: 100vh; font-family: var(--font-body); font-size: 1rem; line-height: 1.65; color: var(--c-text); background: var(--c-bg); transition: background .3s, color .3s; }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea, select { font: inherit; color: inherit; border: none; background: none; cursor: pointer; }
+    :focus-visible { outline: 2px solid var(--c-gold); outline-offset: 3px; }
+    .sr-only { position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap; }
+
+    /* ── Layout helpers ── */
+    .wrap  { width: min(calc(100% - 2.5rem), var(--max-w)); margin: 0 auto; }
+    .wrap-sm { width: min(calc(100% - 2.5rem), 820px); margin: 0 auto; }
+    .hidden { display: none !important; }
+    .grid2  { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .grid3  { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
+      padding: .8rem 1.4rem; border-radius: var(--r-full); font-weight: 700; font-size: .95rem;
+      transition: transform .15s, box-shadow .15s, background .15s;
+      line-height: 1;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-gold  { background: var(--c-gold); color: #fff; box-shadow: 0 4px 16px rgba(184,135,58,.35); }
+    .btn-gold:hover  { background: var(--c-gold-dk); box-shadow: 0 6px 22px rgba(184,135,58,.45); }
+    .btn-outline { background: transparent; border: 1.5px solid var(--c-border); }
+    .btn-outline:hover { background: var(--c-surface2); }
+    .btn-sm { padding: .55rem 1rem; font-size: .875rem; }
+
+    /* ── Pill / badge ── */
+    .pill {
+      display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .8rem;
+      border-radius: var(--r-full); background: var(--c-gold-lt); color: var(--c-gold);
+      font-size: .75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+    }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: 200;
+      background: var(--c-text); color: var(--c-inv); padding: 1rem 1.25rem;
+      border-radius: var(--r-md); box-shadow: var(--shadow-lg); max-width: 340px;
+      font-size: .92rem; opacity: 0; transform: translateY(10px); pointer-events: none; transition: .22s ease;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    /* ══════════════════ HEADER ══════════════════ */
+    .site-header {
+      position: sticky; top: 0; z-index: 80;
+      backdrop-filter: blur(16px) saturate(1.4);
+      background: color-mix(in srgb, var(--c-bg) 88%, transparent);
+      border-bottom: 1px solid var(--c-divider);
+      height: var(--nav-h);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 100%; }
+    .brand { display: flex; align-items: center; gap: .85rem; }
+    .brand-logo-wrap {
+      width: 42px; height: 42px; background: var(--c-gold); border-radius: 12px;
+      display: grid; place-items: center; color: #fff; flex-shrink: 0;
+    }
+    .brand-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; line-height: 1.1; }
+    .brand-sub  { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--c-muted); }
+
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a { font-weight: 500; color: var(--c-muted); transition: color .15s; font-size: .95rem; }
+    .nav-links a:hover { color: var(--c-text); }
+
+    .nav-actions { display: flex; align-items: center; gap: .65rem; }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: var(--r-full); border: 1.5px solid var(--c-border);
+      display: grid; place-items: center; background: var(--c-surface); transition: background .15s;
+    }
+    .icon-btn:hover { background: var(--c-surface2); }
+    #menuBtn { display: none; }
+
+    /* Mobile nav drawer */
+    .nav-drawer {
+      display: none; position: absolute; top: var(--nav-h); left: 0; right: 0;
+      background: var(--c-surface); border-bottom: 1px solid var(--c-divider);
+      padding: 1.25rem 1.5rem; box-shadow: var(--shadow-md);
+      flex-direction: column; gap: 1rem;
+    }
+    .nav-drawer.open { display: flex; }
+    .nav-drawer a { font-weight: 600; font-size: 1.05rem; padding: .5rem 0; border-bottom: 1px solid var(--c-divider); }
+    .nav-drawer a:last-of-type { border-bottom: none; }
+
+    /* ══════════════════ HERO ══════════════════ */
+    .hero { padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(2.5rem, 5vw, 4rem); }
+    .hero-inner { display: grid; grid-template-columns: 1.1fr .9fr; gap: 2rem; align-items: center; }
+    .hero-eyebrow { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
+    .hero-line { width: 36px; height: 2px; background: var(--c-gold); }
+    .hero-label { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--c-gold); }
+    .hero-title {
+      font-family: var(--font-display); font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 900; line-height: 1.04; color: var(--c-text); margin-bottom: 1.1rem;
+    }
+    .hero-title em { color: var(--c-gold); font-style: normal; }
+    .hero-desc { color: var(--c-muted); max-width: 52ch; margin-bottom: 2rem; font-size: 1.05rem; }
+    .hero-btns { display: flex; flex-wrap: wrap; gap: .85rem; margin-bottom: 2.5rem; }
+    .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .stat-box {
+      background: var(--c-surface); border: 1px solid var(--c-divider);
+      border-radius: var(--r-lg); padding: 1rem 1.1rem;
+    }
+    .stat-box strong { display: block; font-family: var(--font-display); font-size: 1.6rem; color: var(--c-gold); }
+    .stat-box span { font-size: .8rem; color: var(--c-muted); }
+
+    .hero-visual { position: relative; border-radius: var(--r-xl); overflow: hidden; height: 520px; }
+    .hero-img {
+      width: 100%; height: 100%; object-fit: cover;
+      background: linear-gradient(135deg, #b8873a22, #1c1a1611),
+        url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&q=80') center/cover;
+    }
+    .hero-overlay-card {
+      position: absolute; bottom: 1.25rem; left: 1.25rem;
+      background: color-mix(in srgb, var(--c-surface) 90%, transparent);
+      backdrop-filter: blur(16px); border: 1px solid var(--c-divider);
+      border-radius: var(--r-lg); padding: 1rem 1.2rem; min-width: 230px;
+      box-shadow: var(--shadow-md);
+    }
+    .hero-overlay-card strong { display: block; margin-bottom: .3rem; }
+    .hero-overlay-card span { font-size: .85rem; color: var(--c-muted); }
+    .hero-badge {
+      position: absolute; top: 1.25rem; right: 1.25rem;
+      background: var(--c-gold); color: #fff; border-radius: var(--r-full);
+      padding: .5rem 1rem; font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
+      box-shadow: 0 4px 16px rgba(184,135,58,.4);
+    }
+
+    /* ══════════════════ SECTION COMMONS ══════════════════ */
+    section { padding: 0 0 clamp(3rem, 6vw, 5rem); }
+    .section-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .section-title { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; line-height: 1.1; }
+    .section-sub   { color: var(--c-muted); margin-top: .4rem; max-width: 60ch; }
+    .divider { height: 1px; background: var(--c-divider); margin: 0 0 clamp(3rem, 6vw, 5rem); }
+
+    /* ══════════════════ SEARCH BAR ══════════════════ */
+    .search-bar-wrap { background: var(--c-surface); border: 1px solid var(--c-divider); border-radius: var(--r-full); box-shadow: var(--shadow-md); padding: .55rem .55rem .55rem 1.25rem; display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
+    #searchInput { flex: 1; background: none; font-size: .97rem; color: var(--c-text); }
+    #searchInput::placeholder { color: var(--c-faint); }
+    #searchInput:focus { outline: none; }
+
+    /* ══════════════════ PROPERTY CARDS ══════════════════ */
+    .properties-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .property-card {
+      background: var(--c-surface); border: 1px solid var(--c-divider);
+      border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .property-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .prop-media { aspect-ratio: 4/3; position: relative; overflow: hidden; }
+    .prop-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s; }
+    .property-card:hover .prop-media img { transform: scale(1.04); }
+    .prop-tag {
+      position: absolute; top: .75rem; left: .75rem;
+      background: var(--c-gold); color: #fff; font-size: .72rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .08em; padding: .3rem .7rem;
+      border-radius: var(--r-full);
+    }
+    .prop-body { padding: 1.2rem; }
+    .prop-price { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--c-gold); margin-bottom: .3rem; }
+    .prop-title { font-weight: 700; font-size: 1rem; margin-bottom: .5rem; }
+    .prop-location { display: flex; align-items: center; gap: .35rem; color: var(--c-muted); font-size: .87rem; margin-bottom: .85rem; }
+    .prop-features { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .chip { padding: .3rem .65rem; border-radius: var(--r-full); background: var(--c-surface2); border: 1px solid var(--c-divider); font-size: .78rem; font-weight: 600; }
+    .prop-footer { padding: .9rem 1.2rem; border-top: 1px solid var(--c-divider); display: flex; justify-content: flex-end; }
+
+    /* Photo gallery in card */
+    .prop-gallery { display: flex; gap: .4rem; overflow-x: auto; padding: .4rem 1.2rem .9rem; scrollbar-width: none; }
+    .prop-gallery::-webkit-scrollbar { display: none; }
+    .prop-gallery img { height: 54px; border-radius: .6rem; flex-shrink: 0; cursor: pointer; }
+
+    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--c-muted); grid-column: 1 / -1; }
+    .empty-state svg { margin: 0 auto 1rem; opacity: .35; }
+
+    /* ══════════════════ CALENDAR ══════════════════ */
+    .calendar-section { background: var(--c-surface); border: 1px solid var(--c-divider); border-radius: var(--r-xl); padding: 1.75rem; box-shadow: var(--shadow-sm); }
+    .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .cal-nav h3 { font-family: var(--font-display); font-size: 1.2rem; }
+    .cal-nav button { width: 36px; height: 36px; border-radius: var(--r-full); border: 1.5px solid var(--c-border); background: var(--c-surface2); display: grid; place-items: center; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: .4rem; }
+    .cal-day-name { text-align: center; font-size: .75rem; font-weight: 700; color: var(--c-faint); padding: .4rem 0; text-transform: uppercase; letter-spacing: .07em; }
+    .cal-day {
+      aspect-ratio: 1; display: grid; place-items: center; border-radius: .7rem;
+      font-size: .87rem; font-weight: 600; border: 1px solid transparent;
+      cursor: pointer; transition: background .15s, border-color .15s, color .15s;
+    }
+    .cal-day.empty { cursor: default; }
+    .cal-day.other-month { color: var(--c-faint); }
+    .cal-day.today { border-color: var(--c-gold); color: var(--c-gold); }
+    .cal-day.free:hover { background: var(--c-gold-lt); border-color: var(--c-gold); color: var(--c-gold); }
+    .cal-day.busy  { opacity: .38; cursor: not-allowed; text-decoration: line-through; }
+    .cal-day.selected { background: var(--c-gold) !important; color: #fff !important; border-color: var(--c-gold) !important; }
+    .cal-legend { display: flex; gap: 1.25rem; margin-top: 1.1rem; flex-wrap: wrap; }
+    .cal-legend span { display: flex; align-items: center; gap: .4rem; font-size: .8rem; color: var(--c-muted); }
+    .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .dot-free { background: var(--c-gold); }
+    .dot-busy { background: var(--c-faint); }
+    .dot-sel  { background: var(--c-gold); border: 2px solid var(--c-text); }
+
+    /* ══════════════════ FORMS ══════════════════ */
+    .form-card { background: var(--c-surface); border: 1px solid var(--c-divider); border-radius: var(--r-xl); padding: 1.75rem; box-shadow: var(--shadow-sm); }
+    .form-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: .35rem; }
+    .form-sub   { color: var(--c-muted); font-size: .93rem; margin-bottom: 1.5rem; }
+    .field      { display: grid; gap: .4rem; }
+    .field-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    label       { font-size: .88rem; font-weight: 700; }
+    input, textarea, select {
+      width: 100%; padding: .8rem 1rem; border-radius: var(--r-md);
+      border: 1.5px solid var(--c-border); background: var(--c-surface2);
+      font-size: .97rem; transition: border-color .15s;
+    }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--c-gold); }
+    textarea { min-height: 110px; resize: vertical; }
+    input[readonly] { cursor: pointer; }
+    .form-btns { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.25rem; }
+    .required-note { font-size: .78rem; color: var(--c-faint); margin-top: -.25rem; }
+
+    /* ══════════════════ CONTACT SECTION ══════════════════ */
+    .contact-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 1.5rem; align-items: start; }
+    .contact-info-card { background: var(--c-surface); border: 1px solid var(--c-divider); border-radius: var(--r-xl); padding: 1.75rem; }
+    .contact-detail { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--c-divider); }
+    .contact-detail:last-child { border-bottom: none; }
+    .c-icon { width: 40px; height: 40px; background: var(--c-gold-lt); border-radius: var(--r-md); display: grid; place-items: center; color: var(--c-gold); flex-shrink: 0; }
+    .c-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--c-faint); font-weight: 700; }
+    .c-value { font-weight: 600; margin-top: .15rem; }
+
+    /* ══════════════════ FOOTER ══════════════════ */
+    footer {
+      border-top: 1px solid var(--c-divider); padding: 2.5rem 0;
+      background: var(--c-surface2); color: var(--c-muted); font-size: .88rem;
+    }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-brand { font-family: var(--font-display); font-weight: 700; color: var(--c-text); }
+
+    /* ══════════════════ LIGHTBOX ══════════════════ */
+    .lightbox { position: fixed; inset: 0; z-index: 150; background: rgba(0,0,0,.88); display: grid; place-items: center; padding: 1rem; }
+    .lightbox img { max-width: 92vw; max-height: 88vh; border-radius: var(--r-lg); box-shadow: var(--shadow-lg); }
+    .lb-close { position: absolute; top: 1rem; right: 1rem; color: #fff; font-size: 2rem; line-height: 1; cursor: pointer; }
+
+    /* ══════════════════ RESPONSIVE ══════════════════ */
+    @media (max-width: 1000px) {
+      .properties-grid { grid-template-columns: 1fr 1fr; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-visual { height: 340px; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      #menuBtn { display: grid; }
+      .properties-grid { grid-template-columns: 1fr; }
+      .field-row { grid-template-columns: 1fr; }
+      .hero-stats { grid-template-columns: 1fr 1fr; }
+      .grid2, .grid3 { grid-template-columns: 1fr; }
+    }
+  
+    /* ── Property detail modal ── */
+    #propModal { position:fixed; inset:0; z-index:80; background:rgba(0,0,0,.6); backdrop-filter:blur(6px); display:grid; place-items:center; padding:1rem; overflow-y:auto; }
+    #propModal.hidden { display:none; }
+    .pm-card { background:var(--c-surface); border-radius:1.5rem; box-shadow:0 24px 60px rgba(0,0,0,.22); width:min(100%, 860px); max-height:90vh; overflow-y:auto; display:grid; grid-template-columns:1fr 1fr; }
+    .pm-gallery { position:relative; background:#000; border-radius:1.5rem 0 0 1.5rem; overflow:hidden; min-height:340px; }
+    .pm-gallery img#pmMainImg { width:100%; height:100%; object-fit:cover; display:block; }
+    .pm-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.45); border:none; color:#fff; width:38px; height:38px; border-radius:50%; font-size:1.2rem; display:grid; place-items:center; cursor:pointer; transition:.15s; }
+    #pmPrev { left:.75rem; } #pmNext { right:.75rem; }
+    .pm-thumbs { display:flex; gap:.5rem; padding:.6rem; overflow-x:auto; background:rgba(0,0,0,.35); }
+    .pm-thumbs img { width:60px; height:45px; object-fit:cover; border-radius:.5rem; cursor:pointer; opacity:.6; flex-shrink:0; transition:.15s; }
+    .pm-thumbs img.active, .pm-thumbs img:hover { opacity:1; outline:2px solid var(--c-gold); }
+    .pm-info { padding:1.75rem; display:grid; align-content:start; gap:1rem; overflow-y:auto; }
+    .pm-close { justify-self:end; background:var(--c-surface2); border:1px solid var(--c-border); width:36px; height:36px; border-radius:50%; display:grid; place-items:center; cursor:pointer; font-size:1.5rem; }
+    .pm-price { font-size:1.6rem; font-weight:900; color:var(--c-gold); }
+    .pm-title { font-size:1.25rem; font-weight:800; line-height:1.2; }
+    .pm-loc { color:var(--c-muted); }
+    .pm-feat { font-size:.9rem; color:var(--c-muted); background:var(--c-surface2); border-radius:.6rem; padding:.5rem .75rem; border:1px solid var(--c-border); }
+    .pm-desc { font-size:.93rem; line-height:1.65; color:var(--c-muted); }
+    @media (max-width:700px) { .pm-card { grid-template-columns:1fr; } .pm-gallery { border-radius:1.5rem 1.5rem 0 0; min-height:220px; } }
+
+
+    /* ══ FORM TYPE SWITCHER ══ */
+    .form-type-switcher {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .4rem;
+      background: var(--c-surface2); border: 1px solid var(--c-border);
+      border-radius: var(--r-full); padding: .35rem; margin-bottom: 1.1rem;
+    }
+    .type-tab {
+      display: flex; align-items: center; justify-content: center; gap: .5rem;
+      padding: .7rem 1rem; border-radius: var(--r-full); font-weight: 700; font-size: .9rem;
+      color: var(--c-muted); transition: background .18s, color .18s, box-shadow .18s;
+      border: 1.5px solid transparent;
+    }
+    .type-tab.active {
+      background: var(--c-surface); color: var(--c-gold);
+      box-shadow: var(--shadow-sm); border-color: var(--c-divider);
+    }
+    .type-tab:hover:not(.active) { color: var(--c-text); }
+  </style>
+</head>
+<body>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ════ HEADER ════ -->
+  <header class="site-header">
+    <div class="wrap nav">
+      <a href="#inicio" class="brand" aria-label="Roman Inmobiliaria">
+        <div class="brand-logo-wrap" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 48 48" fill="none"><path d="M8 24L24 9l16 15" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 9v30" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="brand-name">Roman</div>
+          <div class="brand-sub">Inmobiliaria</div>
+        </div>
+      </a>
+
+      <nav class="nav-links" aria-label="Principal">
+        <a href="#propiedades">Propiedades</a>
+        <a href="#contacto">Contacto / Cita</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeBtn" aria-label="Cambiar tema">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIcon"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <a href="admin.html" class="btn btn-outline btn-sm" aria-label="Acceso administrador">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Admin
+        </a>
+        <button class="icon-btn" id="menuBtn" aria-label="Menú" aria-expanded="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="nav-drawer" id="navDrawer" aria-label="Menú móvil">
+      <a href="#propiedades">Propiedades</a>
+      <a href="#contacto">Contacto / Cita</a>
+    </nav>
+  </header>
+
+  <main id="inicio">
+
+    <!-- ════ HERO ════ -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <div class="hero-eyebrow"><div class="hero-line"></div><span class="hero-label">Sevilla &amp; provincia</span></div>
+          <h1 class="hero-title" id="heroTitle">Encuentra tu próximo <em>hogar</em> con nosotros</h1>
+          <p class="hero-desc">En Roman Inmobiliaria llevamos años ayudando a familias a encontrar la vivienda perfecta. Trato cercano, honesto y profesional.</p>
+          <div class="hero-btns">
+            <a href="#propiedades" class="btn btn-gold">Ver propiedades</a>
+            <a href="#contacto" class="btn btn-outline">Pedir cita</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-box"><strong id="statProps">0</strong><span>Propiedades activas</span></div>
+            <div class="stat-box"><strong>+200</strong><span>Clientes atendidos</span></div>
+            <div class="stat-box"><strong>10+</strong><span>Años de experiencia</span></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-img" role="img" aria-label="Casa de lujo, fachada moderna"></div>
+          <div class="hero-badge">Nuevo anuncio</div>
+          <div class="hero-overlay-card">
+            <strong>Chalet adosado · Bormujos</strong>
+            <span>4 dorm · 2 baños · 180 m²</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ PROPIEDADES ════ -->
+    <section id="propiedades" aria-labelledby="propsTitle">
+      <div class="wrap">
+        <div class="section-header">
+          <div>
+            <span class="pill">Catálogo</span>
+            <h2 class="section-title" id="propsTitle" style="margin-top:.6rem;">Propiedades disponibles</h2>
+            <p class="section-sub">Nuestro catálogo actualizado. Pulsa en cualquier propiedad para más información.</p>
+          </div>
+        </div>
+
+        <!-- Search bar -->
+        <div class="search-bar-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="searchInput" type="search" placeholder="Buscar por título, ubicación o características…" aria-label="Buscar propiedades">
+          <button class="btn btn-gold btn-sm" style="flex-shrink:0;" onclick="filterProps()">Buscar</button>
+        </div>
+
+        <div class="properties-grid" id="propertiesGrid" aria-live="polite" aria-label="Listado de propiedades">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <div class="divider wrap"></div>
+
+    <!-- ════ CONTACTO / CITA UNIFICADO ════ -->
+    <section id="contacto" aria-labelledby="contactTitle">
+      <div class="wrap">
+        <div class="section-header">
+          <div>
+            <span class="pill">Contacto &amp; Citas</span>
+            <h2 class="section-title" id="contactTitle" style="margin-top:.6rem;">¿En qué podemos ayudarte?</h2>
+            <p class="section-sub">Elige si quieres enviarnos un mensaje o solicitar una cita. Te respondemos lo antes posible.</p>
+          </div>
+        </div>
+
+        <div class="contact-grid">
+
+          <!-- FORMULARIO UNIFICADO -->
+          <div class="form-card">
+            <div class="form-type-switcher" role="group" aria-label="Tipo de consulta">
+              <button type="button" class="type-tab active" id="tabMessage">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Enviar mensaje
+              </button>
+              <button type="button" class="type-tab" id="tabAppointment">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Pedir cita
+              </button>
+            </div>
+
+            <p class="form-sub" id="formSubText">Cuéntanos qué necesitas y te respondemos lo antes posible.</p>
+
+            <form id="unifiedForm" novalidate>
+              <div style="display:grid;gap:1rem;">
+
+                <!-- Datos personales — siempre visibles -->
+                <div class="field-row">
+                  <div class="field">
+                    <label for="uName">Nombre y apellidos *</label>
+                    <input id="uName" type="text" required placeholder="Ej. Ana López Martín">
+                  </div>
+                  <div class="field">
+                    <label for="uPhone">Teléfono *</label>
+                    <input id="uPhone" type="tel" required placeholder="600 000 000">
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="uEmail">Correo electrónico *</label>
+                  <input id="uEmail" type="email" required placeholder="correo@ejemplo.com">
+                </div>
+
+                <!-- CAMPOS MENSAJE -->
+                <div id="msgFields">
+                  <div style="display:grid;gap:1rem;">
+                    <div class="field">
+                      <label for="uMotivo">Motivo del contacto *</label>
+                      <select id="uMotivo">
+                        <option value="">Selecciona un motivo…</option>
+                        <option>Información sobre una propiedad</option>
+                        <option>Quiero vender mi propiedad</option>
+                        <option>Solicitar valoración</option>
+                        <option>Otro asunto</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="uMsg">Mensaje *</label>
+                      <textarea id="uMsg" placeholder="Cuéntanos en qué podemos ayudarte…"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CAMPOS CITA -->
+                <div id="apptFields" class="hidden">
+                  <div style="display:grid;gap:1rem;">
+                    <div class="field-row">
+                      <div class="field">
+                        <label for="apptDateInput">Fecha elegida *</label>
+                        <div style="position:relative;">
+                          <input id="apptDateInput" type="text" readonly placeholder="← Elige día en el calendario" style="cursor:default;padding-right:2.5rem;">
+                          <svg style="position:absolute;right:.85rem;top:50%;transform:translateY(-50%);pointer-events:none;opacity:.45;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                      </div>
+                      <div class="field">
+                        <label for="apptTime">Hora preferida *</label>
+                        <select id="apptTime">
+                          <option value="">Selecciona primero una fecha…</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label for="apptReason">Motivo de la cita *</label>
+                      <textarea id="apptReason" placeholder="Quiero visitar una propiedad, vender mi casa, recibir asesoramiento…"></textarea>
+                    </div>
+                    <p class="required-note">La cita quedará pendiente hasta que te confirmemos por teléfono.</p>
+                  </div>
+                </div>
+
+                <p class="required-note">* Campos obligatorios.</p>
+              </div>
+              <div class="form-btns">
+                <button class="btn btn-gold" type="submit" id="uSubmitBtn">Enviar mensaje</button>
+                <button class="btn btn-outline" type="button" id="uResetBtn">Limpiar</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- COLUMNA DERECHA -->
+          <div style="display:grid;gap:1.5rem;align-content:start;">
+
+            <!-- Calendario — visible sólo en modo cita -->
+            <div class="calendar-section hidden" id="calendarBlock">
+              <div class="cal-nav">
+                <button id="calPrev" aria-label="Mes anterior">&#8592;</button>
+                <h3 id="calMonthLabel"></h3>
+                <button id="calNext" aria-label="Mes siguiente">&#8594;</button>
+              </div>
+              <div class="cal-grid" id="calGrid" role="grid"></div>
+              <div class="cal-legend">
+                <span><span class="dot dot-free"></span> Disponible</span>
+                <span><span class="dot dot-busy"></span> Ocupado</span>
+                <span><span class="dot dot-sel"></span> Seleccionado</span>
+              </div>
+              <p id="calSelMsg" style="margin-top:1rem;color:var(--c-gold);font-weight:600;font-size:.9rem;min-height:1.3em;"></p>
+            </div>
+
+            <!-- Info de contacto -->
+            <div class="contact-info-card">
+              <span class="pill" style="margin-bottom:1.25rem;display:inline-flex;">Dónde encontrarnos</span>
+              <div class="contact-detail">
+                <div class="c-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                <div><div class="c-label">Dirección</div><div class="c-value">Calle San Sebastián 40, Benacazón, Sevilla</div></div>
+              </div>
+              <div class="contact-detail">
+                <div class="c-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+                <div><div class="c-label">Teléfono</div><div class="c-value">616 163 138</div></div>
+              </div>
+              <div class="contact-detail">
+                <div class="c-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+                <div><div class="c-label">Email</div><div class="c-value">romaninmobiliaria@gmail.com</div></div>
+              </div>
+              <div class="contact-detail">
+                <div class="c-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <div><div class="c-label">Horario</div><div class="c-value">Lun–Vie 10:00–14:00 / 17:30–20:30</div></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Property detail modal -->
+  <div id="propModal" class="hidden" role="dialog" aria-modal="true" aria-label="Detalle de propiedad" tabindex="-1">
+    <div class="pm-card">
+      <div class="pm-gallery">
+        <img id="pmMainImg" src="" alt="Imagen principal de la propiedad">
+        <button class="pm-nav" id="pmPrev" aria-label="Foto anterior">&#8592;</button>
+        <button class="pm-nav" id="pmNext" aria-label="Foto siguiente">&#8594;</button>
+        <div class="pm-thumbs" id="pmThumbs"></div>
+      </div>
+      <div class="pm-info">
+        <button class="pm-close" id="pmClose" aria-label="Cerrar">&times;</button>
+        <span id="pmTag" class="prop-tag tag-sale" style="position:static;display:inline-flex;width:fit-content;"></span>
+        <div class="pm-price" id="pmPrice"></div>
+        <div class="pm-title" id="pmTitle"></div>
+        <div class="pm-loc" id="pmLocation"></div>
+        <div class="pm-feat" id="pmFeatures"></div>
+        <div class="pm-desc" id="pmDescription"></div>
+        <button class="btn btn-gold" id="pmCitaBtn">Pedir cita para esta propiedad</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox hidden" id="lightbox" role="dialog" aria-label="Vista ampliada de imagen">
+    <span class="lb-close" id="lbClose" role="button" aria-label="Cerrar">&times;</span>
+    <img id="lbImg" src="" alt="Imagen ampliada de la propiedad">
+  </div>
+
+  <!-- ════ FOOTER ════ -->
+  <footer>
+    <div class="wrap footer-inner">
+      <div>
+        <span class="footer-brand">Roman Inmobiliaria</span>
+        <p style="margin-top:.35rem;">Tu hogar, nuestra misión.</p>
+      </div>
+      <p>&copy; <span id="footerYear"></span> Roman Inmobiliaria. Todos los derechos reservados. &nbsp;·&nbsp; <a href="admin.html" style="color:var(--c-muted);font-size:.8rem;opacity:.5;transition:.15s" aria-label="Panel de administrador">Acceso admin</a></p>
+    </div>
+  </footer>
+
+<script>
+  const SUPA_URL = 'https://dbncbyupmvsypsxzidom.supabase.co';
+  const SUPA_KEY = 'sb_publishable_XB06JzGdZIkS9mJ1ljeP7g_STcPgRBU';
+
+  // ── Supabase REST helpers ──
+  async function sbSelect(table, options='') {
+    const r = await fetch(`${SUPA_URL}/rest/v1/${table}?${options}`, {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+  async function sbInsert(table, body) {
+    const r = await fetch(`${SUPA_URL}/rest/v1/${table}`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer ' + SUPA_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) {
+      const txt = await r.text();
+      let msg = txt;
+      try { const j = JSON.parse(txt); msg = j.message || j.error || j.hint || txt; } catch {}
+      throw new Error(`[${r.status}] ${msg}`);
+    }
+    // return=minimal gives empty body on success
+    const txt = await r.text();
+    try { return txt ? JSON.parse(txt) : {}; } catch { return {}; }
+  }
+
+  function uid() { return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2); }
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function toast(msg, dur=3800) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+
+  // ── Theme ──
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('romanTheme', t);
+    const ico = document.getElementById('themeIcon');
+    if (!ico) return;
+    if (t === 'dark') ico.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" fill="none"/>';
+    else ico.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+  }
+  applyTheme(localStorage.getItem('romanTheme') || 'light');
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  // ── Mobile nav ──
+  const menuBtn = document.getElementById('menuBtn');
+  const navDrawer = document.getElementById('navDrawer');
+  if (menuBtn) menuBtn.addEventListener('click', () => {
+    const open = navDrawer.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open);
+  });
+  if (navDrawer) navDrawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navDrawer.classList.remove('open')));
+
+  // ── Properties ──
+  let allProperties = [];
+
+  async function loadProperties() {
+    try {
+      allProperties = await sbSelect('properties', 'order=created_at.desc');
+      document.getElementById('statProps').textContent = allProperties.length;
+      renderProperties();
+    } catch(e) {
+      console.error('Error cargando propiedades:', e);
+    }
+  }
+
+  function renderProperties(filter='') {
+    const grid = document.getElementById('propertiesGrid');
+    const q = filter.toLowerCase().trim();
+    const filtered = q ? allProperties.filter(p =>
+      (p.title+p.location+(p.features||'')+(p.description||'')).toLowerCase().includes(q)
+    ) : allProperties;
+
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <p>No se encontraron propiedades${q ? ' para "'+q+'"' : ''}.</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(p => {
+      const imgs = Array.isArray(p.images) && p.images.length ? p.images : ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80'];
+      const tagCls = p.tag === 'Alquiler' ? 'tag-rent' : 'tag-sale';
+      return `<article class="prop-card" data-id="${p.id}" tabindex="0" role="button" aria-label="Ver detalles de ${esc(p.title)}">
+        <div class="prop-media">
+          <img src="${esc(imgs[0])}" alt="${esc(p.title)}" loading="lazy">
+          <span class="prop-tag ${tagCls}">${esc(p.tag||'Venta')}</span>
+        </div>
+        <div class="prop-body">
+          <div class="prop-price">${esc(p.price)}</div>
+          <h3 class="prop-title">${esc(p.title)}</h3>
+          <p class="prop-loc">📍 ${esc(p.location)}</p>
+          <p class="prop-feat">${esc(p.features||'')}</p>
+        </div>
+      </article>`;
+    }).join('');
+
+    grid.querySelectorAll('.prop-card').forEach(card => {
+      const open = () => openPropertyModal(card.dataset.id);
+      card.addEventListener('click', open);
+      card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') open(); });
+    });
+  }
+
+  // ── Property detail modal ──
+  function openPropertyModal(id) {
+    const p = allProperties.find(x => x.id === id);
+    if (!p) return;
+    const imgs = Array.isArray(p.images) && p.images.length ? p.images : ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80'];
+    let currentImg = 0;
+
+    const overlay = document.getElementById('propModal');
+    document.getElementById('pmTitle').textContent = p.title;
+    document.getElementById('pmPrice').textContent = p.price;
+    document.getElementById('pmLocation').textContent = p.location;
+    document.getElementById('pmFeatures').textContent = p.features || '';
+    document.getElementById('pmDescription').textContent = p.description || '';
+    document.getElementById('pmTag').textContent = p.tag || 'Venta';
+    document.getElementById('pmTag').className = 'prop-tag ' + (p.tag === 'Alquiler' ? 'tag-rent' : 'tag-sale');
+
+    const mainImg = document.getElementById('pmMainImg');
+    const thumbs  = document.getElementById('pmThumbs');
+    const prevBtn = document.getElementById('pmPrev');
+    const nextBtn = document.getElementById('pmNext');
+
+    function setImg(i) {
+      currentImg = i;
+      mainImg.src = imgs[i];
+      thumbs.querySelectorAll('img').forEach((t,j) => t.classList.toggle('active', j === i));
+    }
+
+    mainImg.src = imgs[0];
+    thumbs.innerHTML = imgs.map((src,i) => `<img src="${esc(src)}" alt="Foto ${i+1}" loading="lazy" class="${i===0?'active':''}">`).join('');
+    thumbs.querySelectorAll('img').forEach((t,i) => t.addEventListener('click', () => setImg(i)));
+
+    prevBtn.onclick = () => setImg((currentImg - 1 + imgs.length) % imgs.length);
+    nextBtn.onclick = () => setImg((currentImg + 1) % imgs.length);
+    prevBtn.style.display = imgs.length > 1 ? '' : 'none';
+    nextBtn.style.display = imgs.length > 1 ? '' : 'none';
+
+    document.getElementById('pmCitaBtn').onclick = () => {
+      overlay.classList.add('hidden');
+      setFormType('appointment');
+      document.getElementById('contacto').scrollIntoView({behavior:'smooth'});
+    };
+
+    overlay.classList.remove('hidden');
+    overlay.focus();
+  }
+
+  document.getElementById('pmClose').addEventListener('click', () => document.getElementById('propModal').classList.add('hidden'));
+  document.getElementById('propModal').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.add('hidden'); });
+
+  // ── Search ──
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) searchInput.addEventListener('input', e => renderProperties(e.target.value));
+
+  // ── Calendar ──
+  let selectedDate = null;
+  let bookedSlots = []; // array de "DD/MM/YYYY|HH:MM"
+  let calYear, calMonth;
+  (function initCalMonth() {
+    const now = new Date();
+    calYear  = now.getFullYear();
+    calMonth = now.getMonth();
+  })();
+
+  const MONTH_NAMES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const ALL_SLOTS = ['10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','17:30','18:00','18:30','19:00','19:30','20:00','20:30'];
+
+  async function loadBusyDays() {
+    renderCalendar();
+    try {
+      const appts = await sbSelect('appointments', 'select=date,time&status=neq.rejected');
+      bookedSlots = appts.filter(a => a.date && a.time).map(a => a.date + '|' + a.time);
+    } catch(e) { bookedSlots = []; }
+    renderCalendar();
+    if (selectedDate) updateTimeOptions();
+  }
+
+  function dateToStr(y, m, d) {
+    return `${String(d).padStart(2,'0')}/${String(m+1).padStart(2,'0')}/${y}`;
+  }
+
+  function updateTimeOptions() {
+    const sel = document.getElementById('apptTime');
+    const dateStr = document.getElementById('apptDateInput').value;
+    const prevVal = sel.value;
+    // rebuild options
+    sel.innerHTML = '<option value="">Selecciona una hora…</option>';
+    const morningGroup = document.createElement('optgroup');
+    morningGroup.label = 'Mañana (10:00 – 14:00)';
+    const afternoonGroup = document.createElement('optgroup');
+    afternoonGroup.label = 'Tarde (17:30 – 20:30)';
+    ALL_SLOTS.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = t;
+      const key = dateStr + '|' + t;
+      if (bookedSlots.includes(key)) {
+        opt.disabled = true;
+        opt.textContent = t + ' (reservado)';
+      }
+      if (t <= '13:30') morningGroup.appendChild(opt);
+      else afternoonGroup.appendChild(opt);
+    });
+    sel.appendChild(morningGroup);
+    sel.appendChild(afternoonGroup);
+    // restore previous selection if still available
+    if (prevVal && !bookedSlots.includes(dateStr + '|' + prevVal)) sel.value = prevVal;
+  }
+
+  function renderCalendar() {
+    const grid = document.getElementById('calGrid');
+    const label = document.getElementById('calMonthLabel');
+    if (!grid) return;
+
+    label.textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+
+    const dayNames = ['L','M','X','J','V','S','D'];
+    grid.innerHTML = dayNames.map(n => `<div class="cal-day-name">${n}</div>`).join('');
+
+    const firstDay = new Date(calYear, calMonth, 1);
+    let offset = (firstDay.getDay() + 6) % 7;
+    for (let i = 0; i < offset; i++) {
+      grid.insertAdjacentHTML('beforeend', '<div class="cal-day empty"></div>');
+    }
+
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const thisDate  = new Date(calYear, calMonth, day);
+      const dateStr   = dateToStr(calYear, calMonth, day);
+      const isPast    = thisDate < today;
+      const isWeekend = thisDate.getDay() === 0 || thisDate.getDay() === 6;
+      // fully booked = todas las horas de ese día están reservadas
+      const dayBooked = ALL_SLOTS.every(t => bookedSlots.includes(dateStr + '|' + t));
+      const isBlocked = isPast || isWeekend || dayBooked;
+      const isToday   = thisDate.getTime() === today.getTime();
+      const isSel     = selectedDate && thisDate.getTime() === selectedDate.getTime();
+
+      let cls = 'cal-day';
+      if (isBlocked) cls += ' busy';
+      else cls += ' free';
+      if (isToday && !isBlocked) cls += ' today';
+      if (isSel) cls += ' selected';
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = cls;
+      btn.textContent = day;
+      btn.disabled = isBlocked;
+      btn.setAttribute('aria-label', dateStr + (isWeekend ? ' (fin de semana)' : dayBooked ? ' (completo)' : isPast ? ' (pasado)' : ''));
+
+      if (!isBlocked) {
+        btn.addEventListener('click', () => {
+          selectedDate = new Date(calYear, calMonth, day);
+          document.getElementById('apptDateInput').value = dateStr;
+          const msg = document.getElementById('calSelMsg');
+          if (msg) msg.textContent = '📅 Fecha seleccionada: ' + dateStr;
+          updateTimeOptions();
+          renderCalendar();
+        });
+      }
+      grid.appendChild(btn);
+    }
+  }
+
+  document.getElementById('calPrev').addEventListener('click', () => {
+    calMonth--;
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+  });
+  document.getElementById('calNext').addEventListener('click', () => {
+    calMonth++;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    renderCalendar();
+  });
+
+  // ── Form type switcher ──
+  let currentFormType = 'message';
+
+  function setFormType(type) {
+    currentFormType = type;
+    const isAppt = type === 'appointment';
+    document.getElementById('tabMessage').classList.toggle('active', !isAppt);
+    document.getElementById('tabAppointment').classList.toggle('active', isAppt);
+    document.getElementById('msgFields').classList.toggle('hidden', isAppt);
+    document.getElementById('apptFields').classList.toggle('hidden', !isAppt);
+    document.getElementById('calendarBlock').classList.toggle('hidden', !isAppt);
+    document.getElementById('formSubText').textContent = isAppt
+      ? 'Selecciona un día en el calendario y rellena tus datos. Te llamaremos para confirmar.'
+      : 'Cuéntanos qué necesitas y te respondemos lo antes posible.';
+    document.getElementById('uSubmitBtn').textContent = isAppt
+      ? 'Enviar solicitud de cita'
+      : 'Enviar mensaje';
+    // Reset when switching tabs
+    document.getElementById('unifiedForm').reset();
+    selectedDate = null;
+    document.getElementById('apptDateInput').value = '';
+    document.getElementById('apptTime').innerHTML = '<option value="">Selecciona primero una fecha…</option>';
+    const calMsg = document.getElementById('calSelMsg');
+    if (calMsg) calMsg.textContent = '';
+    loadBusyDays();
+  }
+
+  document.getElementById('tabMessage').addEventListener('click',     () => setFormType('message'));
+  document.getElementById('tabAppointment').addEventListener('click', () => setFormType('appointment'));
+
+  document.getElementById('uResetBtn').addEventListener('click', () => {
+    document.getElementById('unifiedForm').reset();
+    selectedDate = null;
+    document.getElementById('apptDateInput').value = '';
+    document.getElementById('apptTime').innerHTML = '<option value="">Selecciona primero una fecha…</option>';
+    const calMsg = document.getElementById('calSelMsg');
+    if (calMsg) calMsg.textContent = '';
+    renderCalendar();
+  });
+
+  // ── Unified form submit ──
+  document.getElementById('unifiedForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name  = document.getElementById('uName').value.trim();
+    const phone = document.getElementById('uPhone').value.trim();
+    const email = document.getElementById('uEmail').value.trim();
+
+    if (!name)  { toast('⚠️ Introduce tu nombre y apellidos.'); return; }
+    if (!phone) { toast('⚠️ Introduce tu número de teléfono.'); return; }
+    if (!email) { toast('⚠️ Introduce tu correo electrónico.'); return; }
+
+    const btn = document.getElementById('uSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+
+    try {
+      if (currentFormType === 'appointment') {
+        // ── CITA ──
+        if (!selectedDate) { toast('⚠️ Selecciona primero un día en el calendario.'); return; }
+        const time   = document.getElementById('apptTime').value;
+        const reason = document.getElementById('apptReason').value.trim();
+        if (!time)   { toast('⚠️ Selecciona una hora para la cita.'); return; }
+        if (!reason) { toast('⚠️ Indica el motivo de la cita.'); return; }
+
+        await sbInsert('appointments', {
+          name, phone, email,
+          date:   document.getElementById('apptDateInput').value,
+          time, reason,
+          status: 'pending'
+        });
+
+        document.getElementById('unifiedForm').reset();
+        selectedDate = null;
+        document.getElementById('apptDateInput').value = '';
+        document.getElementById('apptTime').innerHTML = '<option value="">Selecciona primero una fecha…</option>';
+        const calMsg = document.getElementById('calSelMsg');
+        if (calMsg) calMsg.textContent = '';
+        await loadBusyDays();
+        toast('✅ Cita guardada. Nos pondremos en contacto pronto.');
+      } else {
+        // ── MENSAJE ──
+        const motivo = document.getElementById('uMotivo').value.trim();
+        const message = document.getElementById('uMsg').value.trim();
+        if (!motivo)   { toast('⚠️ Selecciona un motivo de contacto.'); return; }
+        if (!message)  { toast('⚠️ Escribe tu mensaje.'); return; }
+
+        await sbInsert('messages', {
+          name, phone, email,
+          motivo,
+          message,
+          status: 'new'
+        });
+
+        document.getElementById('unifiedForm').reset();
+        toast('✅ Mensaje enviado. Te responderemos lo antes posible.');
+      }
+    } catch(err) {
+      toast('❌ Error al enviar: ' + err.message);
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = currentFormType === 'appointment' ? 'Enviar solicitud de cita' : 'Enviar mensaje';
+    }
+  });
+
+  // ── Init ──
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+  loadProperties();
+  loadBusyDays();
+</script>
+</body>
 </html>
