@@ -1,0 +1,15 @@
+/* tokens.css — variables globales */
+:root {
+  --color-primary: #c8a96e;
+  --color-primary-dark: #a8874e;
+  --color-bg: #0a0a0a;
+  --color-surface: #111111;
+  --color-text: #f5f5f5;
+  --color-text-muted: #999;
+  --color-border: rgba(255,255,255,0.1);
+  --font-body: 'Inter', sans-serif;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --space-4: 1rem;
+  --space-8: 2rem;
+}
